@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CycleGenerator, SampleGenerator } from './generators';
+import { CycleGenerator, SampleGenerator } from './index';
 
 describe('Generators', () => {
     describe('CycleGenerator', () => {

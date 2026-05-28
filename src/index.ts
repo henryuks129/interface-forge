@@ -32,6 +32,7 @@ export {
     FixtureValidationError,
     ValidationError,
 } from './errors';
+export { BaseGenerator, CycleGenerator, SampleGenerator } from './generators';
 export { Ref } from './utils';
 
 export type AfterBuildHook<T> = (obj: T) => Promise<T> | T;
