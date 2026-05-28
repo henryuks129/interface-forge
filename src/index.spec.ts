@@ -1,4 +1,5 @@
-import { Factory, PersistenceAdapter } from './index.js';
+import type { PersistenceAdapter } from './index.js';
+import { Factory } from './index.js';
 import { MongooseAdapter } from '../examples/adapters/mongoose-adapter.js';
 import { PrismaAdapter } from '../examples/adapters/prisma-adapter.js';
 import { TypeORMAdapter } from '../examples/adapters/typeorm-adapter.js';
@@ -96,9 +97,7 @@ describe('Factory class functionality', () => {
 
         it('merges options correctly when passed object literal', () => {
             const factory = new Factory<ComplexObject>(() => ({ ...defaults }));
-            expect(
-                factory.build({ name: 'newObject' }),
-            ).toStrictEqual<ComplexObject>({
+            expect(factory.build({ name: 'newObject' })).toStrictEqual<ComplexObject>({
                 ...defaults,
                 name: 'newObject',
             });
@@ -138,10 +137,7 @@ describe('Factory class functionality', () => {
 
         it('applies unique overrides to each object in a batch when provided an array', () => {
             const factory = new Factory<TestObject>(() => defaultObject);
-            const overrides = [
-                { name: 'Unique Name 1' },
-                { name: 'Unique Name 2' },
-            ];
+            const overrides = [{ name: 'Unique Name 1' }, { name: 'Unique Name 2' }];
             const results = factory.batch(overrides.length, overrides);
             results.forEach((result, index) => {
                 expect(result.name).toBe(overrides[index].name);
@@ -167,25 +163,19 @@ describe('Factory class functionality', () => {
 
         it('throws error for negative batch size', () => {
             const factory = new Factory<TestObject>(() => defaultObject);
-            expect(() => factory.batch(-1)).toThrow(
-                'Batch size must be a non-negative integer',
-            );
+            expect(() => factory.batch(-1)).toThrow('Batch size must be a non-negative integer');
         });
 
         it('throws error for non-integer batch size', () => {
             const factory = new Factory<TestObject>(() => defaultObject);
-            expect(() => factory.batch(3.14)).toThrow(
-                'Batch size must be a non-negative integer',
-            );
+            expect(() => factory.batch(3.14)).toThrow('Batch size must be a non-negative integer');
         });
     });
 
     describe('batchAsync method', () => {
         it('creates a batch of objects with async factory', async () => {
             const factory = new Factory<TestObject>(async (faker) => ({
-                age: await Promise.resolve(
-                    faker.number.int({ max: 65, min: 18 }),
-                ),
+                age: await Promise.resolve(faker.number.int({ max: 65, min: 18 })),
                 name: faker.person.firstName(),
             }));
 
@@ -229,12 +219,8 @@ describe('Factory class functionality', () => {
 
         it('throws error for invalid batch size in async', async () => {
             const factory = new Factory<TestObject>(async () => defaultObject);
-            await expect(factory.batchAsync(-1)).rejects.toThrow(
-                'Batch size must be a non-negative integer',
-            );
-            await expect(factory.batchAsync(1.5)).rejects.toThrow(
-                'Batch size must be a non-negative integer',
-            );
+            await expect(factory.batchAsync(-1)).rejects.toThrow('Batch size must be a non-negative integer');
+            await expect(factory.batchAsync(1.5)).rejects.toThrow('Batch size must be a non-negative integer');
         });
 
         it('returns empty array when size is 0 in async', async () => {
@@ -250,19 +236,14 @@ describe('Factory class functionality', () => {
             const values = ['Value 1', 'Value 2', 'Value 3'];
             const generator = factory.iterate(values);
             const cycleLength = values.length * 2;
-            const results = Array.from(
-                { length: cycleLength },
-                () => generator.next().value,
-            );
+            const results = Array.from({ length: cycleLength }, () => generator.next().value);
             const expectedResults = [...values, ...values];
             expect(results).toEqual(expectedResults);
         });
 
         it('throws error when given empty iterable', () => {
             const factory = new Factory<TestObject>(() => defaultObject);
-            expect(() => factory.iterate([])).toThrow(
-                'Cannot create generator from empty iterable',
-            );
+            expect(() => factory.iterate([])).toThrow('Cannot create generator from empty iterable');
         });
 
         it('cycles through values of an iterable', () => {
@@ -294,9 +275,7 @@ describe('Factory class functionality', () => {
 
         it('throws error when given empty iterable', () => {
             const factory = new Factory<TestObject>(() => defaultObject);
-            expect(() => factory.sample([])).toThrow(
-                'Cannot create generator from empty iterable',
-            );
+            expect(() => factory.sample([])).toThrow('Cannot create generator from empty iterable');
         });
 
         it('samples values from the iterable', () => {
@@ -322,23 +301,16 @@ describe('Factory class functionality', () => {
                 },
                 value: factory.number.int({ max: 3, min: 1 }),
             }));
-            const factoryWithOptions = new Factory<ComplexObject>(
-                (factory) => ({
-                    ...defaults,
-                    options: {
-                        children: factory.use(
-                            complexFactory.batch.bind(complexFactory),
-                            2,
-                        ),
-                        type: '1' as const,
-                    },
-                }),
-            );
+            const factoryWithOptions = new Factory<ComplexObject>((factory) => ({
+                ...defaults,
+                options: {
+                    children: factory.use(complexFactory.batch.bind(complexFactory), 2),
+                    type: '1' as const,
+                },
+            }));
 
             expect(factoryWithOptions.build().options).toBeTruthy();
-            expect(factoryWithOptions.build().options!.children).toHaveLength(
-                2,
-            );
+            expect(factoryWithOptions.build().options!.children).toHaveLength(2);
         });
     });
 
@@ -359,14 +331,12 @@ describe('Factory class functionality', () => {
                 id: factory.string.uuid(),
             }));
 
-            const AdminUserFactory = BaseUserFactory.extend<AdminUser>(
-                (factory) => ({
-                    createdAt: factory.date.recent(),
-                    id: factory.string.uuid(),
-                    permissions: ['read', 'write', 'delete'],
-                    role: 'admin',
-                }),
-            );
+            const AdminUserFactory = BaseUserFactory.extend<AdminUser>((factory) => ({
+                createdAt: factory.date.recent(),
+                id: factory.string.uuid(),
+                permissions: ['read', 'write', 'delete'],
+                role: 'admin',
+            }));
 
             const admin = AdminUserFactory.build();
             expect(admin.id).toBeDefined();
@@ -381,12 +351,10 @@ describe('Factory class functionality', () => {
                 id: factory.string.uuid(),
             }));
 
-            const CustomUserFactory = BaseUserFactory.extend<BaseUser>(
-                (factory) => ({
-                    createdAt: factory.date.recent(),
-                    id: 'custom-id',
-                }),
-            );
+            const CustomUserFactory = BaseUserFactory.extend<BaseUser>((factory) => ({
+                createdAt: factory.date.recent(),
+                id: 'custom-id',
+            }));
 
             const user = CustomUserFactory.build();
             expect(user.id).toBe('custom-id');
@@ -752,9 +720,7 @@ describe('Factory class functionality', () => {
             });
 
             const user = UserFactory.build();
-            expect(user.email).toBe(
-                `${user.firstName.toLowerCase()}.${user.lastName.toLowerCase()}@example.com`,
-            );
+            expect(user.email).toBe(`${user.firstName.toLowerCase()}.${user.lastName.toLowerCase()}@example.com`);
         });
 
         it('throws ConfigurationError when async hook is used with build()', () => {
@@ -796,9 +762,7 @@ describe('Factory class functionality', () => {
             });
 
             const user = await UserFactory.buildAsync();
-            expect(user.email).toBe(
-                `${user.firstName.toLowerCase()}.${user.lastName.toLowerCase()}@example.com`,
-            );
+            expect(user.email).toBe(`${user.firstName.toLowerCase()}.${user.lastName.toLowerCase()}@example.com`);
         });
 
         it('runs multiple synchronous hooks in the correct order', () => {
@@ -878,9 +842,7 @@ describe('Factory class functionality', () => {
             })).beforeBuild(() => {
                 throw new Error('Error in beforeBuild');
             });
-            await expect(UserFactory.buildAsync()).rejects.toThrow(
-                'Error in beforeBuild',
-            );
+            await expect(UserFactory.buildAsync()).rejects.toThrow('Error in beforeBuild');
         });
 
         it('handles errors in afterBuild with build()', () => {
@@ -902,9 +864,7 @@ describe('Factory class functionality', () => {
             })).afterBuild(() => {
                 throw new Error('Error in afterBuild');
             });
-            await expect(UserFactory.buildAsync()).rejects.toThrow(
-                'Error in afterBuild',
-            );
+            await expect(UserFactory.buildAsync()).rejects.toThrow('Error in afterBuild');
         });
 
         it('allows mixing synchronous and asynchronous hooks with buildAsync', async () => {
@@ -923,9 +883,7 @@ describe('Factory class functionality', () => {
                 });
 
             const user = await UserFactory.buildAsync();
-            expect(user.email).toBe(
-                `${user.firstName.toLowerCase()}.${user.lastName.toLowerCase()}@example.com`,
-            );
+            expect(user.email).toBe(`${user.firstName.toLowerCase()}.${user.lastName.toLowerCase()}@example.com`);
         });
 
         it('validates that hooks preserve type safety', () => {
@@ -953,9 +911,7 @@ describe('Factory class functionality', () => {
                 throw new TypeError('Incorrect type returned by hook');
             });
 
-            expect(() => UserFactory.build()).toThrow(
-                'Incorrect type returned by hook',
-            );
+            expect(() => UserFactory.build()).toThrow('Incorrect type returned by hook');
         });
     });
 
@@ -975,11 +931,7 @@ describe('Factory class functionality', () => {
         describe('MongooseAdapter', () => {
             it('creates a single document', async () => {
                 const mockModel = {
-                    create: vi
-                        .fn()
-                        .mockImplementation((data: any) =>
-                            Promise.resolve(data),
-                        ),
+                    create: vi.fn().mockImplementation((data: any) => Promise.resolve(data)),
                     insertMany: vi.fn(),
                 };
 
@@ -998,11 +950,7 @@ describe('Factory class functionality', () => {
             it('creates multiple documents', async () => {
                 const mockModel = {
                     create: vi.fn(),
-                    insertMany: vi
-                        .fn()
-                        .mockImplementation((docs: any[]) =>
-                            Promise.resolve(docs),
-                        ),
+                    insertMany: vi.fn().mockImplementation((docs: any[]) => Promise.resolve(docs)),
                 };
 
                 const adapter = new MongooseAdapter<TestUser>(mockModel);
@@ -1026,11 +974,7 @@ describe('Factory class functionality', () => {
         describe('PrismaAdapter', () => {
             it('creates a single record', async () => {
                 const mockModel = {
-                    create: vi
-                        .fn()
-                        .mockImplementation(({ data }) =>
-                            Promise.resolve(data),
-                        ),
+                    create: vi.fn().mockImplementation(({ data }) => Promise.resolve(data)),
                     createMany: vi.fn(),
                 };
 
@@ -1077,11 +1021,7 @@ describe('Factory class functionality', () => {
             it('creates a single entity', async () => {
                 const mockRepository = {
                     create: vi.fn().mockImplementation((data: any) => data),
-                    save: vi
-                        .fn()
-                        .mockImplementation((data: any) =>
-                            Promise.resolve(data),
-                        ),
+                    save: vi.fn().mockImplementation((data: any) => Promise.resolve(data)),
                 };
 
                 const adapter = new TypeORMAdapter<TestUser>(mockRepository);
@@ -1100,11 +1040,7 @@ describe('Factory class functionality', () => {
             it('creates multiple entities', async () => {
                 const mockRepository = {
                     create: vi.fn().mockImplementation((data: any) => data),
-                    save: vi
-                        .fn()
-                        .mockImplementation((data: any) =>
-                            Promise.resolve(data),
-                        ),
+                    save: vi.fn().mockImplementation((data: any) => Promise.resolve(data)),
                 };
 
                 const adapter = new TypeORMAdapter<TestUser>(mockRepository);
@@ -1129,16 +1065,8 @@ describe('Factory class functionality', () => {
         describe('Custom Adapter', () => {
             it('uses a custom persistence adapter', async () => {
                 const mockAdapter: PersistenceAdapter<TestUser> = {
-                    create: vi
-                        .fn()
-                        .mockImplementation((data: any) =>
-                            Promise.resolve(data),
-                        ),
-                    createMany: vi
-                        .fn()
-                        .mockImplementation((data: any) =>
-                            Promise.resolve(data),
-                        ),
+                    create: vi.fn().mockImplementation((data: any) => Promise.resolve(data)),
+                    createMany: vi.fn().mockImplementation((data: any) => Promise.resolve(data)),
                 };
 
                 // Test single create
@@ -1177,12 +1105,8 @@ describe('Factory class functionality', () => {
 
         it('uses default adapter when set with withAdapter', async () => {
             const mockAdapter: PersistenceAdapter<TestUser> = {
-                create: vi
-                    .fn()
-                    .mockImplementation((data: any) => Promise.resolve(data)),
-                createMany: vi
-                    .fn()
-                    .mockImplementation((data: any) => Promise.resolve(data)),
+                create: vi.fn().mockImplementation((data: any) => Promise.resolve(data)),
+                createMany: vi.fn().mockImplementation((data: any) => Promise.resolve(data)),
             };
 
             const factory = new Factory<TestUser>((faker) => ({
@@ -1205,12 +1129,8 @@ describe('Factory class functionality', () => {
             };
 
             const optionsAdapter: PersistenceAdapter<TestUser> = {
-                create: vi
-                    .fn()
-                    .mockImplementation((data: any) => Promise.resolve(data)),
-                createMany: vi
-                    .fn()
-                    .mockImplementation((data: any) => Promise.resolve(data)),
+                create: vi.fn().mockImplementation((data: any) => Promise.resolve(data)),
+                createMany: vi.fn().mockImplementation((data: any) => Promise.resolve(data)),
             };
 
             const factory = new Factory<TestUser>((faker) => ({
@@ -1229,17 +1149,13 @@ describe('Factory class functionality', () => {
         describe('synchronous factory functions', () => {
             it('receives kwargs parameter when overrides are provided', () => {
                 let receivedKwargs: Partial<TestObject> | undefined;
-                const factory = new Factory<TestObject>(
-                    (factory, _iteration, kwargs) => {
-                        receivedKwargs = kwargs;
-                        return {
-                            age:
-                                kwargs?.age ??
-                                factory.number.int({ max: 65, min: 18 }),
-                            name: kwargs?.name ?? factory.person.firstName(),
-                        };
-                    },
-                );
+                const factory = new Factory<TestObject>((factory, _iteration, kwargs) => {
+                    receivedKwargs = kwargs;
+                    return {
+                        age: kwargs?.age ?? factory.number.int({ max: 65, min: 18 }),
+                        name: kwargs?.name ?? factory.person.firstName(),
+                    };
+                });
 
                 const result = factory.build({ age: 30, name: 'Alice' });
                 expect(receivedKwargs).toEqual({ age: 30, name: 'Alice' });
@@ -1249,31 +1165,25 @@ describe('Factory class functionality', () => {
 
             it('receives empty object kwargs when no overrides are provided', () => {
                 let receivedKwargs: Partial<TestObject> | undefined;
-                const factory = new Factory<TestObject>(
-                    (factory, _iteration, kwargs) => {
-                        receivedKwargs = kwargs;
-                        return {
-                            age: factory.number.int({ max: 65, min: 18 }),
-                            name: factory.person.firstName(),
-                        };
-                    },
-                );
+                const factory = new Factory<TestObject>((factory, _iteration, kwargs) => {
+                    receivedKwargs = kwargs;
+                    return {
+                        age: factory.number.int({ max: 65, min: 18 }),
+                        name: factory.person.firstName(),
+                    };
+                });
 
                 factory.build();
                 expect(receivedKwargs).toEqual({});
             });
 
             it('can use kwargs to conditionally generate properties', () => {
-                const factory = new Factory<TestObject>(
-                    (factory, _iteration, kwargs) => {
-                        return {
-                            age:
-                                kwargs?.age ??
-                                factory.number.int({ max: 65, min: 0 }),
-                            name: 'Default Name',
-                        };
-                    },
-                );
+                const factory = new Factory<TestObject>((factory, _iteration, kwargs) => {
+                    return {
+                        age: kwargs?.age ?? factory.number.int({ max: 65, min: 0 }),
+                        name: 'Default Name',
+                    };
+                });
 
                 const withOverrides = factory.build({ name: 'Bob' });
                 expect(withOverrides.name).toBe('Bob');
@@ -1285,14 +1195,12 @@ describe('Factory class functionality', () => {
             });
 
             it('handles partial kwargs correctly', () => {
-                const factory = new Factory<TestObject>(
-                    (factory, _iteration, kwargs) => {
-                        return {
-                            age: kwargs?.age ?? 25,
-                            name: kwargs?.name ?? factory.person.firstName(),
-                        };
-                    },
-                );
+                const factory = new Factory<TestObject>((factory, _iteration, kwargs) => {
+                    return {
+                        age: kwargs?.age ?? 25,
+                        name: kwargs?.name ?? factory.person.firstName(),
+                    };
+                });
 
                 const partialOverride = factory.build({ name: 'Charlie' });
                 expect(partialOverride.name).toBe('Charlie');
@@ -1301,28 +1209,18 @@ describe('Factory class functionality', () => {
 
             it('preserves kwargs structure in batch operations', () => {
                 const receivedKwargs: (Partial<TestObject> | undefined)[] = [];
-                const factory = new Factory<TestObject>(
-                    (_factory, iteration, kwargs) => {
-                        receivedKwargs.push(kwargs);
-                        return {
-                            age: kwargs?.age ?? 20 + iteration,
-                            name: kwargs?.name ?? `Name-${iteration}`,
-                        };
-                    },
-                );
+                const factory = new Factory<TestObject>((_factory, iteration, kwargs) => {
+                    receivedKwargs.push(kwargs);
+                    return {
+                        age: kwargs?.age ?? 20 + iteration,
+                        name: kwargs?.name ?? `Name-${iteration}`,
+                    };
+                });
 
-                const overrides = [
-                    { name: 'First' },
-                    { age: 40, name: 'Second' },
-                    { age: 50 },
-                ];
+                const overrides = [{ name: 'First' }, { age: 40, name: 'Second' }, { age: 50 }];
 
                 const results = factory.batch(3, overrides);
-                expect(receivedKwargs).toEqual([
-                    { name: 'First' },
-                    { age: 40, name: 'Second' },
-                    { age: 50 },
-                ]);
+                expect(receivedKwargs).toEqual([{ name: 'First' }, { age: 40, name: 'Second' }, { age: 50 }]);
                 expect(results[0].name).toBe('First');
                 expect(results[1].name).toBe('Second');
                 expect(results[1].age).toBe(40);
@@ -1335,17 +1233,12 @@ describe('Factory class functionality', () => {
                     value: null | number;
                 }
 
-                const factory = new Factory<NullableTestObject>(
-                    (factory, _iteration, kwargs) => {
-                        return {
-                            name: kwargs?.name ?? factory.person.firstName(),
-                            value:
-                                kwargs?.value === undefined
-                                    ? factory.number.int()
-                                    : kwargs.value,
-                        };
-                    },
-                );
+                const factory = new Factory<NullableTestObject>((factory, _iteration, kwargs) => {
+                    return {
+                        name: kwargs?.name ?? factory.person.firstName(),
+                        value: kwargs?.value === undefined ? factory.number.int() : kwargs.value,
+                    };
+                });
 
                 const result = factory.build({ value: null });
                 expect(result.value).toBeNull();
@@ -1359,19 +1252,14 @@ describe('Factory class functionality', () => {
                     type: 'advanced' | 'basic';
                 }
 
-                const factory = new Factory<ConditionalObject>(
-                    (factory, _iteration, kwargs) => {
-                        const type = kwargs?.type ?? 'basic';
-                        return {
-                            features:
-                                type === 'advanced'
-                                    ? ['feature1', 'feature2']
-                                    : undefined,
-                            name: kwargs?.name ?? factory.person.firstName(),
-                            type,
-                        };
-                    },
-                );
+                const factory = new Factory<ConditionalObject>((factory, _iteration, kwargs) => {
+                    const type = kwargs?.type ?? 'basic';
+                    return {
+                        features: type === 'advanced' ? ['feature1', 'feature2'] : undefined,
+                        name: kwargs?.name ?? factory.person.firstName(),
+                        type,
+                    };
+                });
 
                 const basic = factory.build({ type: 'basic' });
                 expect(basic.type).toBe('basic');
@@ -1386,18 +1274,14 @@ describe('Factory class functionality', () => {
         describe('asynchronous factory functions', () => {
             it('receives kwargs parameter in async factory functions', async () => {
                 let receivedKwargs: Partial<TestObject> | undefined;
-                const factory = new Factory<TestObject>(
-                    async (factory, _iteration, kwargs) => {
-                        receivedKwargs = kwargs;
-                        await new Promise((resolve) => setTimeout(resolve, 1));
-                        return {
-                            age:
-                                kwargs?.age ??
-                                factory.number.int({ max: 65, min: 18 }),
-                            name: kwargs?.name ?? factory.person.firstName(),
-                        };
-                    },
-                );
+                const factory = new Factory<TestObject>(async (factory, _iteration, kwargs) => {
+                    receivedKwargs = kwargs;
+                    await new Promise((resolve) => setTimeout(resolve, 1));
+                    return {
+                        age: kwargs?.age ?? factory.number.int({ max: 65, min: 18 }),
+                        name: kwargs?.name ?? factory.person.firstName(),
+                    };
+                });
 
                 const result = await factory.buildAsync({
                     age: 35,
@@ -1409,20 +1293,14 @@ describe('Factory class functionality', () => {
             });
 
             it('handles async operations with kwargs', async () => {
-                const factory = new Factory<TestObject>(
-                    async (factory, _iteration, kwargs) => {
-                        const name = kwargs?.name ?? factory.person.firstName();
-                        const processedName = await Promise.resolve(
-                            name.toUpperCase(),
-                        );
-                        return {
-                            age:
-                                kwargs?.age ??
-                                factory.number.int({ max: 65, min: 18 }),
-                            name: processedName,
-                        };
-                    },
-                );
+                const factory = new Factory<TestObject>(async (factory, _iteration, kwargs) => {
+                    const name = kwargs?.name ?? factory.person.firstName();
+                    const processedName = await Promise.resolve(name.toUpperCase());
+                    return {
+                        age: kwargs?.age ?? factory.number.int({ max: 65, min: 18 }),
+                        name: processedName,
+                    };
+                });
 
                 const result = await factory.buildAsync({ name: 'bob' });
                 // The framework merges the result with kwargs, so the original kwargs value takes precedence
@@ -1431,24 +1309,19 @@ describe('Factory class functionality', () => {
 
             it('works with async batch operations', async () => {
                 const receivedKwargs: (Partial<TestObject> | undefined)[] = [];
-                const factory = new Factory<TestObject>(
-                    async (_factory, iteration, kwargs) => {
-                        receivedKwargs.push(kwargs);
-                        await new Promise((resolve) => setTimeout(resolve, 1));
-                        return {
-                            age: kwargs?.age ?? 30 + iteration,
-                            name: kwargs?.name ?? `AsyncName-${iteration}`,
-                        };
-                    },
-                );
+                const factory = new Factory<TestObject>(async (_factory, iteration, kwargs) => {
+                    receivedKwargs.push(kwargs);
+                    await new Promise((resolve) => setTimeout(resolve, 1));
+                    return {
+                        age: kwargs?.age ?? 30 + iteration,
+                        name: kwargs?.name ?? `AsyncName-${iteration}`,
+                    };
+                });
 
                 const overrides = [{ name: 'AsyncFirst' }, { age: 45 }];
 
                 const results = await factory.batchAsync(2, overrides);
-                expect(receivedKwargs).toEqual([
-                    { name: 'AsyncFirst' },
-                    { age: 45 },
-                ]);
+                expect(receivedKwargs).toEqual([{ name: 'AsyncFirst' }, { age: 45 }]);
                 expect(results[0].name).toBe('AsyncFirst');
                 expect(results[1].age).toBe(45);
             });
@@ -1456,14 +1329,12 @@ describe('Factory class functionality', () => {
 
         describe('factory functions without kwargs parameter', () => {
             it('works with factory functions that ignore kwargs parameter', () => {
-                const factory = new Factory<TestObject>(
-                    (_factory, iteration) => {
-                        return {
-                            age: 25,
-                            name: `Generated-${iteration}`,
-                        };
-                    },
-                );
+                const factory = new Factory<TestObject>((_factory, iteration) => {
+                    return {
+                        age: 25,
+                        name: `Generated-${iteration}`,
+                    };
+                });
 
                 const result = factory.build({
                     age: 99,
@@ -1475,14 +1346,12 @@ describe('Factory class functionality', () => {
             });
 
             it('works with destructured parameters omitting kwargs', () => {
-                const factory = new Factory<TestObject>(
-                    ({ number, person }, iteration) => {
-                        return {
-                            age: number.int({ max: 65, min: 18 }),
-                            name: `${person.firstName()}-${iteration}`,
-                        };
-                    },
-                );
+                const factory = new Factory<TestObject>(({ number, person }, iteration) => {
+                    return {
+                        age: number.int({ max: 65, min: 18 }),
+                        name: `${person.firstName()}-${iteration}`,
+                    };
+                });
 
                 const result = factory.build({ name: 'Override' });
                 // Even though the factory function doesn't use kwargs, the framework still merges the overrides
@@ -1494,37 +1363,28 @@ describe('Factory class functionality', () => {
         describe('kwargs with hooks', () => {
             it('kwargs are processed before beforeBuild hooks', () => {
                 const callOrder: string[] = [];
-                const factory = new Factory<TestObject>(
-                    (factory, _iteration, kwargs) => {
-                        callOrder.push(
-                            `factory-kwargs:${kwargs?.name ?? 'none'}`,
-                        );
-                        return {
-                            age: kwargs?.age ?? 25,
-                            name: kwargs?.name ?? factory.person.firstName(),
-                        };
-                    },
-                ).beforeBuild((params) => {
+                const factory = new Factory<TestObject>((factory, _iteration, kwargs) => {
+                    callOrder.push(`factory-kwargs:${kwargs?.name ?? 'none'}`);
+                    return {
+                        age: kwargs?.age ?? 25,
+                        name: kwargs?.name ?? factory.person.firstName(),
+                    };
+                }).beforeBuild((params) => {
                     callOrder.push(`beforeBuild:${params.name ?? 'none'}`);
                     return params;
                 });
 
                 factory.build({ name: 'TestName' });
-                expect(callOrder).toEqual([
-                    'beforeBuild:TestName',
-                    'factory-kwargs:TestName',
-                ]);
+                expect(callOrder).toEqual(['beforeBuild:TestName', 'factory-kwargs:TestName']);
             });
 
             it('kwargs work with afterBuild hooks', () => {
-                const factory = new Factory<TestObject>(
-                    (factory, _iteration, kwargs) => {
-                        return {
-                            age: kwargs?.age ?? 25,
-                            name: kwargs?.name ?? factory.person.firstName(),
-                        };
-                    },
-                ).afterBuild((obj) => {
+                const factory = new Factory<TestObject>((factory, _iteration, kwargs) => {
+                    return {
+                        age: kwargs?.age ?? 25,
+                        name: kwargs?.name ?? factory.person.firstName(),
+                    };
+                }).afterBuild((obj) => {
                     return { ...obj, name: obj.name.toUpperCase() };
                 });
 
@@ -1545,21 +1405,17 @@ describe('Factory class functionality', () => {
                     role: string;
                 }
 
-                const baseFactory = new Factory<BaseUser>(
-                    (factory, _iteration, kwargs) => ({
-                        id: kwargs?.id ?? factory.string.uuid(),
-                        name: kwargs?.name ?? factory.person.firstName(),
-                    }),
-                );
+                const baseFactory = new Factory<BaseUser>((factory, _iteration, kwargs) => ({
+                    id: kwargs?.id ?? factory.string.uuid(),
+                    name: kwargs?.name ?? factory.person.firstName(),
+                }));
 
-                const extendedFactory = baseFactory.extend<ExtendedUser>(
-                    (factory, _iteration, kwargs) => ({
-                        email: kwargs?.email ?? factory.internet.email(),
-                        id: kwargs?.id ?? factory.string.uuid(),
-                        name: kwargs?.name ?? factory.person.firstName(),
-                        role: kwargs?.role ?? 'user',
-                    }),
-                );
+                const extendedFactory = baseFactory.extend<ExtendedUser>((factory, _iteration, kwargs) => ({
+                    email: kwargs?.email ?? factory.internet.email(),
+                    id: kwargs?.id ?? factory.string.uuid(),
+                    name: kwargs?.name ?? factory.person.firstName(),
+                    role: kwargs?.role ?? 'user',
+                }));
 
                 const result = extendedFactory.build({
                     name: 'Alice',
@@ -1582,17 +1438,14 @@ describe('Factory class functionality', () => {
                     status: string;
                 }
 
-                const userFactory = new Factory<User>(
-                    (factory, _iteration, kwargs) => ({
-                        id: kwargs?.id ?? factory.string.uuid(),
-                        name: kwargs?.name ?? factory.person.firstName(),
-                    }),
-                );
+                const userFactory = new Factory<User>((factory, _iteration, kwargs) => ({
+                    id: kwargs?.id ?? factory.string.uuid(),
+                    name: kwargs?.name ?? factory.person.firstName(),
+                }));
 
-                const userWithStatusFactory =
-                    userFactory.compose<UserWithStatus>({
-                        status: 'active',
-                    });
+                const userWithStatusFactory = userFactory.compose<UserWithStatus>({
+                    status: 'active',
+                });
 
                 const result = userWithStatusFactory.build({ name: 'Bob' });
                 expect(result.name).toBe('Bob');
@@ -1627,8 +1480,7 @@ describe('Factory class functionality', () => {
                 (f, _) => {
                     const depth = f.options?.maxDepth ?? 5;
                     const createNested = (level: number): DeepNested => ({
-                        child:
-                            level < depth ? createNested(level + 1) : undefined,
+                        child: level < depth ? createNested(level + 1) : undefined,
                         level,
                     });
                     return createNested(1);
@@ -1713,9 +1565,7 @@ describe('Factory class functionality', () => {
                 throw new Error('Async factory error');
             });
 
-            await expect(factory.buildAsync()).rejects.toThrow(
-                'Async factory error',
-            );
+            await expect(factory.buildAsync()).rejects.toThrow('Async factory error');
         });
 
         it('should throw error when calling build() with async factory', () => {
@@ -1723,9 +1573,7 @@ describe('Factory class functionality', () => {
                 return { value: 'async result' };
             });
 
-            expect(() => factory.build()).toThrow(
-                'Async factory function detected',
-            );
+            expect(() => factory.build()).toThrow('Async factory function detected');
         });
 
         it('should handle async factory with buildAsync()', async () => {

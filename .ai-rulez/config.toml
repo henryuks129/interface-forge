@@ -1,0 +1,39 @@
+version = "4.0"
+name = "interface-forge"
+description = "TypeScript library for creating strongly typed mock data factories using Faker.js and optional Zod schema integration"
+gitignore = true
+
+presets = ["claude", "gemini", "codex", "copilot", "cursor"]
+
+builtins = [
+  "typescript",
+  "testing",
+  "security",
+  "code-quality",
+  "git-workflow",
+  "default-commands",
+]
+
+[header]
+style = "minimal"
+
+[[includes]]
+name = "kreuzberg-core"
+source = "https://github.com/kreuzberg-dev/ai-rulez.git"
+path = "modules/core"
+merge_strategy = "local-override"
+
+[[includes]]
+name = "kreuzberg-cicd"
+source = "https://github.com/kreuzberg-dev/ai-rulez.git"
+path = "modules/cicd"
+merge_strategy = "local-override"
+
+[[mcp_servers]]
+name = "ai-rulez"
+description = "AI-Rulez MCP server for configuration management"
+command = "npx"
+args = ["-y", "ai-rulez@latest", "mcp"]
+
+[defaults]
+effort = "medium"

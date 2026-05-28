@@ -1,6 +1,6 @@
 import path from 'node:path';
 
-import { PackageJson } from 'type-fest';
+import type { PackageJson } from 'type-fest';
 import { defineConfig } from 'vitest/config';
 import dts from 'vite-plugin-dts';
 
@@ -14,8 +14,7 @@ export default defineConfig({
                 index: path.resolve(__dirname, 'src/index.ts'),
                 zod: path.resolve(__dirname, 'src/zod.ts'),
             },
-            fileName: (format, entryName) =>
-                `${entryName}.${format === 'es' ? 'mjs' : 'js'}`,
+            fileName: (format, entryName) => `${entryName}.${format === 'es' ? 'mjs' : 'js'}`,
             formats: ['es', 'cjs'],
             name,
         },
@@ -29,7 +28,7 @@ export default defineConfig({
         sourcemap: true,
         target: 'es2020',
     },
-    plugins: [dts({ rollupTypes: true })],
+    plugins: [dts({ bundleTypes: true })],
     test: {
         coverage: {
             exclude: ['node_modules/**', 'dist/**'],

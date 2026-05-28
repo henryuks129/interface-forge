@@ -93,9 +93,7 @@ const dynamicUserFactory = new ZodFactory(UserProfileSchema, (factory) => ({
         updatedAt: factory.date.recent(),
     },
     // Only customize these specific fields
-    username: factory.helpers
-        .slugify(`${factory.person.firstName()}_${factory.person.lastName()}`)
-        .toLowerCase(),
+    username: factory.helpers.slugify(`${factory.person.firstName()}_${factory.person.lastName()}`).toLowerCase(),
     // All other required fields (id, age, phoneNumber, etc.) are auto-generated
 }));
 
@@ -161,8 +159,7 @@ const CustomUserSchema = UserProfileSchema.extend({
 const customFactory = new ZodFactory(CustomUserSchema, {
     generators: {
         customEmail: () => `user_${Date.now()}@example.com`,
-        userId: () =>
-            `USR_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`,
+        userId: () => `USR_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`,
     },
 });
 
@@ -210,10 +207,7 @@ const notificationFactory = new ZodFactory(NotificationSystemSchema);
 
 console.log('\n=== Example 7: Discriminated Unions ===');
 const notificationSystem = notificationFactory.build();
-console.log(
-    'Notification system:',
-    JSON.stringify(notificationSystem, null, 2),
-);
+console.log('Notification system:', JSON.stringify(notificationSystem, null, 2));
 
 // Example 8: Recursive schemas with depth control
 interface Category {

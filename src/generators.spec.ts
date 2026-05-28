@@ -25,9 +25,7 @@ describe('Generators', () => {
         });
 
         it('throws error for empty iterable', () => {
-            expect(() => new CycleGenerator([])).toThrow(
-                'Cannot create generator from empty iterable',
-            );
+            expect(() => new CycleGenerator([])).toThrow('Cannot create generator from empty iterable');
         });
     });
 
@@ -68,9 +66,7 @@ describe('Generators', () => {
         });
 
         it('throws error for empty iterable', () => {
-            expect(() => new SampleGenerator([])).toThrow(
-                'Cannot create generator from empty iterable',
-            );
+            expect(() => new SampleGenerator([])).toThrow('Cannot create generator from empty iterable');
         });
     });
 });

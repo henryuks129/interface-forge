@@ -42,11 +42,7 @@ const UserFactory = BaseEntityFactory.extend<User>((factory) => ({
 // 3. Extend User Factory to Create Admin Factory
 const AdminUserFactory = UserFactory.extend<AdminUser>((factory) => ({
     createdAt: factory.date.past(),
-    department: factory.helpers.arrayElement([
-        'Engineering',
-        'Product',
-        'Marketing',
-    ]),
+    department: factory.helpers.arrayElement(['Engineering', 'Product', 'Marketing']),
     email: factory.internet.email(),
     id: factory.string.uuid(),
     name: factory.person.fullName(),

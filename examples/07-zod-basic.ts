@@ -41,9 +41,7 @@ const testUsers = userRegFactory.batch(5, [
 
 console.log(`\nGenerated ${testUsers.length} test users`);
 testUsers.forEach((user, i) => {
-    console.log(
-        `User ${i + 1}: ${user.email} - Marketing: ${user.marketingEmails}`,
-    );
+    console.log(`User ${i + 1}: ${user.email} - Marketing: ${user.marketingEmails}`);
 });
 
 // Example with API response schema

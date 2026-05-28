@@ -57,19 +57,18 @@ export class SampleGenerator<T> extends BaseGenerator<T> {
                 while (true) {
                     yield values[0];
                 }
-            }
+            } else {
+                let lastValue: null | T = null;
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                while (true) {
+                    let newValue: T;
+                    do {
+                        newValue = values[Math.floor(Math.random() * values.length)];
+                    } while (newValue === lastValue);
 
-            let lastValue: null | T = null;
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            while (true) {
-                let newValue: T;
-                do {
-                    newValue =
-                        values[Math.floor(Math.random() * values.length)];
-                } while (newValue === lastValue);
-
-                lastValue = newValue;
-                yield newValue;
+                    lastValue = newValue;
+                    yield newValue;
+                }
             }
         })();
     }

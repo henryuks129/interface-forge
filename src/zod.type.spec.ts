@@ -1,7 +1,7 @@
 /* eslint-disable vitest/expect-expect,@typescript-eslint/no-unused-vars */
 import { expectTypeOf } from 'expect-type';
 import { z } from 'zod/v4';
-import { Factory } from './index';
+import type { Factory } from './index';
 import { ZodFactory } from './zod';
 
 describe('ZodFactory Type Tests', () => {
@@ -116,12 +116,8 @@ describe('ZodFactory Type Tests', () => {
         const request = factory.build();
 
         expectTypeOf(request).toEqualTypeOf<Request>();
-        expectTypeOf(request.status).toEqualTypeOf<
-            'approved' | 'pending' | 'rejected'
-        >();
-        expectTypeOf(request.userRole).toEqualTypeOf<
-            'admin' | 'guest' | 'user'
-        >();
+        expectTypeOf(request.status).toEqualTypeOf<'approved' | 'pending' | 'rejected'>();
+        expectTypeOf(request.userRole).toEqualTypeOf<'admin' | 'guest' | 'user'>();
     });
 
     it('should handle unions', () => {
@@ -439,9 +435,7 @@ describe('ZodFactory Type Tests', () => {
             name: 'Jane Doe',
         });
         expectTypeOf(customPartialUser).toEqualTypeOf<Partial<User>>();
-        expectTypeOf(customPartialUser.name).toEqualTypeOf<
-            string | undefined
-        >();
+        expectTypeOf(customPartialUser.name).toEqualTypeOf<string | undefined>();
         expectTypeOf(customPartialUser.age).toEqualTypeOf<number | undefined>();
     });
 

@@ -86,11 +86,7 @@ function countDepth(category: Category, currentDepth = 0): number {
     if (!category.subcategories || category.subcategories.length === 0) {
         return currentDepth;
     }
-    return Math.max(
-        ...category.subcategories.map((sub) =>
-            countDepth(sub, currentDepth + 1),
-        ),
-    );
+    return Math.max(...category.subcategories.map((sub) => countDepth(sub, currentDepth + 1)));
 }
 
 console.log('Generated category tree:');
@@ -123,12 +119,8 @@ const treeSchema: z.ZodType<TreeNode> = z.lazy(() =>
         if (!node) {
             return current;
         }
-        const leftDepth = node.left
-            ? getMaxDepth(node.left, current + 1)
-            : current;
-        const rightDepth = node.right
-            ? getMaxDepth(node.right, current + 1)
-            : current;
+        const leftDepth = node.left ? getMaxDepth(node.left, current + 1) : current;
+        const rightDepth = node.right ? getMaxDepth(node.right, current + 1) : current;
         return Math.max(leftDepth, rightDepth);
     }
 
@@ -164,9 +156,7 @@ const commentFactory = new ZodFactory(CommentSchema as any, {
 const commentThread = commentFactory.build() as Comment;
 
 function printCommentThread(comment: Comment, indent = ''): void {
-    console.log(
-        `${indent}[${comment.author}]: ${comment.content.slice(0, 50)}...`,
-    );
+    console.log(`${indent}[${comment.author}]: ${comment.content.slice(0, 50)}...`);
     if (comment.replies) {
         comment.replies.forEach((reply) => {
             printCommentThread(reply, `${indent}  `);
@@ -179,9 +169,7 @@ printCommentThread(commentThread);
 
 // Example 6: Best Practices Summary
 console.log('\n=== Best Practices for MaxDepth ===');
-console.log(
-    '1. Always use .optional() for nested objects that might hit depth limits',
-);
+console.log('1. Always use .optional() for nested objects that might hit depth limits');
 console.log('2. Design schemas with natural termination points');
 console.log('3. Consider the total depth needed for your use case');
 console.log('4. Test with different maxDepth values to ensure proper behavior');

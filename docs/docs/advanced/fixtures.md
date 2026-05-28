@@ -48,7 +48,7 @@ const factory = new Factory<User>(factoryFn, {
 
 ## Directory Structure
 
-```
+```text
 project-root/
 ├── __fixtures__/              # Default directory
 │   ├── user-data.json        # Custom fixture
@@ -238,6 +238,7 @@ const user = factory.build({}, { generateFixture: 'validated-user' });
     ```
 
 4. **Error Handling**: Fallback to normal generation
+
     ```typescript
     try {
         return factory.build({}, { generateFixture: 'user' });

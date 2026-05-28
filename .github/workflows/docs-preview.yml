@@ -29,15 +29,8 @@ jobs:
             - name: Install root dependencies
               run: pnpm install --frozen-lockfile
 
-            - name: Install docs dependencies
-              run: |
-                  cd docs
-                  pnpm install --frozen-lockfile
-
             - name: Build documentation
-              run: |
-                  cd docs
-                  pnpm build
+              run: pnpm docs:build
 
             - name: Upload artifact
               uses: actions/upload-artifact@v7

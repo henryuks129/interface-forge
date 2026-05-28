@@ -44,22 +44,14 @@ const CartItemFactory = new Factory<CartItem>((faker) => ({
 
 const OrderFactory = new Factory<Order>((faker) => {
     const items = CartItemFactory.batch(faker.number.int({ max: 5, min: 1 }));
-    const total = items.reduce(
-        (sum, item) => sum + item.product.price * item.quantity,
-        0,
-    );
+    const total = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
     return {
         createdAt: faker.date.recent(),
         customerId: faker.string.uuid(),
         id: faker.string.uuid(),
         items,
-        status: faker.helpers.arrayElement([
-            'pending',
-            'processing',
-            'shipped',
-            'delivered',
-        ]),
+        status: faker.helpers.arrayElement(['pending', 'processing', 'shipped', 'delivered']),
         total,
     };
 });

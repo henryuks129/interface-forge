@@ -1,6 +1,6 @@
 // TypeORM persistence adapter example
 
-import { PersistenceAdapter } from 'interface-forge';
+import type { PersistenceAdapter } from 'interface-forge';
 
 interface TypeORMRepository<T> {
     create(data: T): T;
@@ -60,10 +60,10 @@ const user = await factoryWithAdapter.create();
 const users = await factoryWithAdapter.createMany(5);
 
 // Option 2: Pass adapter in options
-const user2 = await userFactory.create(undefined, { 
-    adapter: new TypeORMAdapter(userRepository) 
+const user2 = await userFactory.create(undefined, {
+    adapter: new TypeORMAdapter(userRepository)
 });
-const users2 = await userFactory.createMany(5, undefined, { 
-    adapter: new TypeORMAdapter(userRepository) 
+const users2 = await userFactory.createMany(5, undefined, {
+    adapter: new TypeORMAdapter(userRepository)
 });
 */

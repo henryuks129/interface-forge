@@ -6,19 +6,12 @@ const sidebars: SidebarsConfig = {
         {
             type: 'category',
             label: 'Getting Started',
-            items: [
-                'getting-started/installation',
-                'getting-started/basic-usage',
-            ],
+            items: ['getting-started/installation', 'getting-started/basic-usage'],
         },
         {
             type: 'category',
             label: 'Core Concepts',
-            items: [
-                'core/factory-basics',
-                'core/composition',
-                'core/generators',
-            ],
+            items: ['core/factory-basics', 'core/composition', 'core/generators'],
         },
         {
             type: 'category',
@@ -28,11 +21,7 @@ const sidebars: SidebarsConfig = {
         {
             type: 'category',
             label: 'Advanced Features',
-            items: [
-                'advanced/persistence',
-                'advanced/fixtures',
-                'advanced/depth-control',
-            ],
+            items: ['advanced/persistence', 'advanced/fixtures', 'advanced/depth-control'],
         },
         'examples',
         'api',

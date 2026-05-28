@@ -19,7 +19,11 @@ const config: Config = {
     projectName: 'interface-forge', // Usually your repo name.
 
     onBrokenLinks: 'throw',
-    onBrokenMarkdownLinks: 'warn',
+    markdown: {
+        hooks: {
+            onBrokenMarkdownLinks: 'warn',
+        },
+    },
 
     i18n: {
         defaultLocale: 'en',
@@ -34,8 +38,7 @@ const config: Config = {
             {
                 docs: {
                     sidebarPath: './sidebars.ts',
-                    editUrl:
-                        'https://github.com/Goldziher/interface-forge/tree/main/docs/',
+                    editUrl: 'https://github.com/Goldziher/interface-forge/tree/main/docs/',
                 },
                 blog: false,
                 theme: {

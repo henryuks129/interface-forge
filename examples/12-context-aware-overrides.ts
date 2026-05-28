@@ -17,18 +17,16 @@ interface TestObject {
 
 // Example 1: Basic Context-Aware Generation
 // The factory function uses kwargs to determine if someone is underage
-const contextAwareFactory = new Factory<TestObject>(
-    (factory, _iteration, kwargs) => {
-        // Generate or use provided age
-        const age = kwargs?.age ?? factory.number.int({ max: 80, min: 0 });
+const contextAwareFactory = new Factory<TestObject>((factory, _iteration, kwargs) => {
+    // Generate or use provided age
+    const age = kwargs?.age ?? factory.number.int({ max: 80, min: 0 });
 
-        return {
-            age,
-            name: kwargs?.name ?? factory.person.firstName(),
-            underAge: age < 18, // depends on the age, which may be overridden
-        };
-    },
-);
+    return {
+        age,
+        name: kwargs?.name ?? factory.person.firstName(),
+        underAge: age < 18, // depends on the age, which may be overridden
+    };
+});
 
 console.log('=== Basic Context-Aware Generation ===');
 

@@ -88,7 +88,5 @@ const progressivePosts = Array.from({ length: 5 }, (_, index) =>
 );
 
 progressivePosts.forEach((post: BlogPost, i: number) => {
-    console.log(
-        `Post ${i + 1}: ${post.comments.length} comments, ${post.viewCount} views`,
-    );
+    console.log(`Post ${i + 1}: ${post.comments.length} comments, ${post.viewCount} views`);
 });

@@ -57,9 +57,8 @@
     "scripts": {
         "build": "rimraf dist && vite build",
         "clean": "rimraf dist",
-        "format": "prettier --write .",
-        "lint": "eslint --fix .",
-        "prepare": "husky",
+        "format": "prek run oxfmt --all-files",
+        "lint": "prek run oxlint --all-files",
         "prepublishOnly": "pnpm build",
         "test": "vitest run",
         "test:coverage": "vitest run --coverage",
@@ -69,54 +68,28 @@
         "docs:serve": "pnpm --filter docs serve"
     },
     "devDependencies": {
-        "@commitlint/cli": "^20.2.0",
-        "@commitlint/config-conventional": "^20.2.0",
-        "@eslint/compat": "^2.0.0",
-        "@eslint/js": "^9.39.2",
-        "@prisma/client": "^7.1.0",
-        "@types/node": "^25.0.2",
-        "@vitest/coverage-v8": "^4.0.15",
-        "ai-rulez": "^2.4.3",
+        "@microsoft/api-extractor": "^7.58.7",
+        "@prisma/client": "^7.8.0",
+        "@types/node": "^25.9.1",
+        "@vitest/coverage-v8": "^4.1.7",
+        "ai-rulez": "^4.2.1",
         "docusaurus-plugin-typedoc": "^1.4.2",
-        "eslint": "^9.39.2",
-        "eslint-config-prettier": "^10.1.8",
-        "eslint-plugin-jsdoc": "^61.5.0",
-        "eslint-plugin-n": "17.23.1",
-        "eslint-plugin-perfectionist": "^4.15.1",
-        "eslint-plugin-promise": "7.2.1",
-        "eslint-plugin-unicorn": "62.0.0",
-        "eslint-plugin-unused-imports": "^4.3.0",
-        "eslint-plugin-vitest": "^0.5.4",
         "expect-type": "^1.3.0",
-        "globals": "^16.5.0",
         "http-server": "^14.1.1",
-        "husky": "^9.1.7",
-        "lint-staged": "^16.2.7",
-        "mongoose": "^9.0.1",
-        "prettier": "^3.7.4",
-        "prettier-plugin-jsdoc": "^1.8.0",
-        "rimraf": "^6.1.2",
-        "type-fest": "^5.3.1",
-        "typedoc": "^0.28.15",
-        "typedoc-plugin-markdown": "^4.9.0",
-        "typescript": "^5.9.3",
-        "typescript-eslint": "^8.49.0",
-        "vite": "^7.2.7",
-        "vite-plugin-dts": "^4.5.4",
-        "vitest": "^4.0.15",
-        "zod": "^4.1.13"
-    },
-    "lint-staged": {
-        "*.{ts,d.ts,js,mjs,md,json,yaml,yml}": "prettier --write",
-        "*.{ts,mjs}": "eslint --fix",
-        "ai-rulez.yaml": [
-            "pnpm ai-rulez generate",
-            "git add CLAUDE.md GEMINI.md"
-        ]
+        "mongoose": "^9.6.3",
+        "rimraf": "^6.1.3",
+        "type-fest": "^5.6.0",
+        "typedoc": "^0.28.19",
+        "typedoc-plugin-markdown": "^4.11.0",
+        "typescript": "^6.0.3",
+        "vite": "^8.0.14",
+        "vite-plugin-dts": "^5.0.1",
+        "vitest": "^4.1.7",
+        "zod": "^4.4.3"
     },
     "dependencies": {
-        "@faker-js/faker": "^10.1.0",
-        "@tool-belt/type-predicates": "^1.4.0"
+        "@faker-js/faker": "^10.4.0",
+        "@tool-belt/type-predicates": "^1.4.1"
     },
     "peerDependencies": {
         "zod": ">=3.0.0"
@@ -126,5 +99,5 @@
             "optional": true
         }
     },
-    "packageManager": "pnpm@10.15.0+sha512.486ebc259d3e999a4e8691ce03b5cac4a71cbeca39372a9b762cb500cfdf0873e2cb16abe3d951b1ee2cf012503f027b98b6584e4df22524e0c7450d9ec7aa7b"
+    "packageManager": "pnpm@11.4.0+sha512.f0febc7e37552ab485494a914241b338e0b3580b93d54ce31f00933015880863129038a1b4ae4e414a0ee63ac35bf21197e990172c4a68256450b5636310968f"
 }

@@ -48,13 +48,7 @@ const OrderSchema = z.object({
         state: z.string(),
         street: z.string(),
     }),
-    status: z.enum([
-        'pending',
-        'processing',
-        'shipped',
-        'delivered',
-        'cancelled',
-    ]),
+    status: z.enum(['pending', 'processing', 'shipped', 'delivered', 'cancelled']),
     subtotal: z.number().positive().multipleOf(0.01),
     tax: z.number().min(0).multipleOf(0.01),
     total: z.number().positive().multipleOf(0.01),
@@ -205,16 +199,13 @@ const ApiOrderResponseSchema = z.object({
 });
 
 // Partial factory - only customize meta field
-const apiResponseFactory = new ZodFactory(
-    ApiOrderResponseSchema,
-    (factory) => ({
-        meta: {
-            requestId: factory.string.uuid(),
-            timestamp: new Date().toISOString(),
-        },
-        // success, data, error fields are auto-generated from schema
-    }),
-);
+const apiResponseFactory = new ZodFactory(ApiOrderResponseSchema, (factory) => ({
+    meta: {
+        requestId: factory.string.uuid(),
+        timestamp: new Date().toISOString(),
+    },
+    // success, data, error fields are auto-generated from schema
+}));
 
 // Success response
 const successResponse = apiResponseFactory.build({
@@ -250,17 +241,17 @@ console.log(`
 // In your test file:
 describe('Order Service', () => {
     const orderFactory = new ZodFactory(OrderSchema);
-    
+
     it('should process a valid order', async () => {
         const testOrder = orderFactory.build({
             status: 'pending',
             paymentStatus: 'paid',
         });
-        
+
         const result = await orderService.process(testOrder);
         expect(result.status).toBe('processing');
     });
-    
+
     it('should handle multiple orders', async () => {
         const testOrders = orderFactory.batch(10);
         const results = await orderService.processMany(testOrders);

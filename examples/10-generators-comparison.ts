@@ -81,9 +81,7 @@ const WorkflowFactory = new Factory<Product>((factory) => ({
 
 const products = WorkflowFactory.batch(5);
 products.forEach((product, index) => {
-    console.log(
-        `Product ${index + 1}: ${product.category} | ${product.status}`,
-    );
+    console.log(`Product ${index + 1}: ${product.category} | ${product.status}`);
 });
 
 export { ProductFactory, WorkflowFactory };

@@ -60,24 +60,16 @@ export default function CodeExamples(): JSX.Element {
     return (
         <section className={styles.codeExamples}>
             <div className="container">
-                <h2 className="text--center margin-bottom--lg">
-                    See It In Action
-                </h2>
+                <h2 className="text--center margin-bottom--lg">See It In Action</h2>
                 <Tabs>
                     <TabItem value="basic" label="Basic Usage" default>
-                        <CodeBlock language="typescript">
-                            {basicExample}
-                        </CodeBlock>
+                        <CodeBlock language="typescript">{basicExample}</CodeBlock>
                     </TabItem>
                     <TabItem value="zod" label="With Zod Schemas">
-                        <CodeBlock language="typescript">
-                            {zodExample}
-                        </CodeBlock>
+                        <CodeBlock language="typescript">{zodExample}</CodeBlock>
                     </TabItem>
                     <TabItem value="composition" label="Factory Composition">
-                        <CodeBlock language="typescript">
-                            {compositionExample}
-                        </CodeBlock>
+                        <CodeBlock language="typescript">{compositionExample}</CodeBlock>
                     </TabItem>
                 </Tabs>
             </div>

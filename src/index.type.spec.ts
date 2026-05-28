@@ -1,7 +1,8 @@
 /* eslint-disable vitest/expect-expect */
 
 import { expectTypeOf } from 'expect-type';
-import { Factory, FactoryFunction, FactorySchema } from './index';
+import type { FactoryFunction, FactorySchema } from './index';
+import { Factory } from './index';
 
 interface Post {
     author: User;
@@ -209,22 +210,14 @@ describe('Factory Type Tests', () => {
             // Return the full extended user
             return {
                 ...baseUser,
-                lastLogin: factory.datatype.boolean()
-                    ? factory.date.recent()
-                    : null,
-                role: factory.helpers.arrayElement([
-                    'admin',
-                    'user',
-                    'guest',
-                ] as const),
+                lastLogin: factory.datatype.boolean() ? factory.date.recent() : null,
+                role: factory.helpers.arrayElement(['admin', 'user', 'guest'] as const),
             };
         });
 
         const extendedUser = extendedFactory.build();
         expectTypeOf(extendedUser).toEqualTypeOf<ExtendedUser>();
-        expectTypeOf(extendedUser.role).toEqualTypeOf<
-            'admin' | 'guest' | 'user'
-        >();
+        expectTypeOf(extendedUser.role).toEqualTypeOf<'admin' | 'guest' | 'user'>();
         expectTypeOf(extendedUser.lastLogin).toEqualTypeOf<Date | null>();
     });
 
@@ -349,9 +342,7 @@ describe('Factory Type Tests', () => {
         const partialUserFactory = userFactory.partial();
         const partialUser = partialUserFactory.build();
 
-        expectTypeOf(partialUserFactory).toEqualTypeOf<
-            Factory<Partial<User>>
-        >();
+        expectTypeOf(partialUserFactory).toEqualTypeOf<Factory<Partial<User>>>();
         expectTypeOf(partialUser).toEqualTypeOf<Partial<User>>();
 
         // All properties should be optional

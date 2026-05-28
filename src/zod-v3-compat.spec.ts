@@ -17,9 +17,7 @@ describe('ZodFactory Zod v3 Compatibility', () => {
             expect(typeof result.email).toBe('string');
             expect(result.email).toContain('@');
             expect(typeof result.uuid).toBe('string');
-            expect(result.uuid).toMatch(
-                /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
-            );
+            expect(result.uuid).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
         });
 
         it('should work with v3 number schemas', () => {
@@ -85,15 +83,11 @@ describe('ZodFactory Zod v3 Compatibility', () => {
             expect(Array.isArray(result.tags)).toBe(true);
             expect(result.tags.length).toBeGreaterThanOrEqual(1);
             expect(result.tags.length).toBeLessThanOrEqual(5);
-            result.tags.forEach((tag: unknown) =>
-                expect(typeof tag).toBe('string'),
-            );
+            result.tags.forEach((tag: unknown) => expect(typeof tag).toBe('string'));
 
             expect(Array.isArray(result.scores)).toBe(true);
             expect(result.scores).toHaveLength(3);
-            result.scores.forEach((score: unknown) =>
-                expect(typeof score).toBe('number'),
-            );
+            result.scores.forEach((score: unknown) => expect(typeof score).toBe('number'));
         });
 
         it('should work with v3 object schemas', () => {
@@ -128,27 +122,18 @@ describe('ZodFactory Zod v3 Compatibility', () => {
             const results = Array.from({ length: 10 }, () => factory.build());
 
             // Check that optional fields sometimes appear and sometimes don't
-            const hasOptionalField = results.some(
-                (r) => r.optionalField !== undefined,
-            );
-            const lacksOptionalField = results.some(
-                (r) => r.optionalField === undefined,
-            );
+            const hasOptionalField = results.some((r) => r.optionalField !== undefined);
+            const lacksOptionalField = results.some((r) => r.optionalField === undefined);
             expect(hasOptionalField || lacksOptionalField).toBe(true);
 
             // Check that nullable fields sometimes are null and sometimes aren't
-            const hasNullableField = results.some(
-                (r) => r.nullableField !== null,
-            );
+            const hasNullableField = results.some((r) => r.nullableField !== null);
             const hasNullValue = results.some((r) => r.nullableField === null);
             expect(hasNullableField || hasNullValue).toBe(true);
 
             // All results should have the optionalNullable property
             results.forEach((result) => {
-                expect(
-                    'optionalNullable' in result ||
-                        result.optionalNullable === undefined,
-                ).toBe(true);
+                expect('optionalNullable' in result || result.optionalNullable === undefined).toBe(true);
             });
         });
 
@@ -162,9 +147,7 @@ describe('ZodFactory Zod v3 Compatibility', () => {
             const results = Array.from({ length: 20 }, () => factory.build());
 
             results.forEach((result) => {
-                expect(['pending', 'approved', 'rejected']).toContain(
-                    result.status,
-                );
+                expect(['pending', 'approved', 'rejected']).toContain(result.status);
             });
 
             // Should generate all possible values across multiple runs
@@ -186,9 +169,7 @@ describe('ZodFactory Zod v3 Compatibility', () => {
             });
 
             // Should generate different types across multiple runs
-            const uniqueTypes = [
-                ...new Set(results.map((r) => typeof r.value)),
-            ];
+            const uniqueTypes = [...new Set(results.map((r) => typeof r.value))];
             expect(uniqueTypes.length).toBeGreaterThan(1);
         });
 
@@ -252,9 +233,7 @@ describe('ZodFactory Zod v3 Compatibility', () => {
             expect(result.url).toMatch(/^https?:\/\//);
 
             expect(typeof result.uuid).toBe('string');
-            expect(result.uuid).toMatch(
-                /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
-            );
+            expect(result.uuid).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
         });
 
         it('should work with v3 string length constraints', () => {

@@ -52,9 +52,8 @@ const AsyncSchema = z.object({
     ),
 });
 
-const asyncFactory = new ZodFactory(AsyncSchema).withTypeHandler(
-    'ZodPromise',
-    () => Promise.resolve('mock promise result'),
+const asyncFactory = new ZodFactory(AsyncSchema).withTypeHandler('ZodPromise', () =>
+    Promise.resolve('mock promise result'),
 );
 
 const asyncObj = asyncFactory.build();
@@ -103,21 +102,18 @@ const RiskySchema = z.object({
     safeFunction: z.function(),
 });
 
-const errorHandlingFactory = new ZodFactory(RiskySchema).withTypeHandler(
-    'ZodFunction',
-    () => {
-        return () => {
-            try {
-                if (Math.random() < 0.5) {
-                    return 'Success!';
-                }
-                throw new Error('Random error');
-            } catch {
-                return 'Fallback result';
+const errorHandlingFactory = new ZodFactory(RiskySchema).withTypeHandler('ZodFunction', () => {
+    return () => {
+        try {
+            if (Math.random() < 0.5) {
+                return 'Success!';
             }
-        };
-    },
-);
+            throw new Error('Random error');
+        } catch {
+            return 'Fallback result';
+        }
+    };
+});
 
 const riskyObj = errorHandlingFactory.build();
 console.log('Testing safe function:');

@@ -4,6 +4,7 @@
     "compilerOptions": {
         "alwaysStrict": true,
         "baseUrl": ".",
+        "ignoreDeprecations": "6.0",
         "esModuleInterop": true,
         "inlineSourceMap": true,
         "module": "CommonJS",

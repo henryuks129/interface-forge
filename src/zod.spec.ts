@@ -156,16 +156,7 @@ describe('ZodFactory', () => {
                 const factory = new ZodFactory(schema);
                 const results = factory.batch(10);
 
-                const validEmojis = [
-                    '😀',
-                    '😎',
-                    '🚀',
-                    '🌟',
-                    '❤️',
-                    '🔥',
-                    '✨',
-                    '🎉',
-                ];
+                const validEmojis = ['😀', '😎', '🚀', '🌟', '❤️', '🔥', '✨', '🎉'];
                 results.forEach((result) => {
                     expect(validEmojis).toContain(result.reaction);
                 });
@@ -183,15 +174,11 @@ describe('ZodFactory', () => {
                     const parts = result.token.split('.');
                     expect(parts).toHaveLength(3);
                     // Check header
-                    const header = JSON.parse(
-                        Buffer.from(parts[0], 'base64url').toString(),
-                    );
+                    const header = JSON.parse(Buffer.from(parts[0], 'base64url').toString());
                     expect(header.alg).toBe('HS256');
                     expect(header.typ).toBe('JWT');
                     // Check payload
-                    const payload = JSON.parse(
-                        Buffer.from(parts[1], 'base64url').toString(),
-                    );
+                    const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString());
                     expect(payload.sub).toBeDefined();
                     expect(payload.iat).toBeDefined();
                 });
@@ -258,9 +245,7 @@ describe('ZodFactory', () => {
                 const results = factory.batch(5);
 
                 results.forEach((result) => {
-                    expect(() =>
-                        Buffer.from(result.encoded, 'base64url'),
-                    ).not.toThrow();
+                    expect(() => Buffer.from(result.encoded, 'base64url')).not.toThrow();
                     expect(result.encoded).not.toMatch(/[+/=]/); // base64url doesn't have these chars
                 });
             });
@@ -274,9 +259,7 @@ describe('ZodFactory', () => {
                 const results = factory.batch(10);
 
                 results.forEach((result) => {
-                    expect(result.network).toMatch(
-                        /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2}$/,
-                    );
+                    expect(result.network).toMatch(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2}$/);
                     const [, prefix] = result.network.split('/');
                     expect(Number(prefix)).toBeGreaterThanOrEqual(0);
                     expect(Number(prefix)).toBeLessThanOrEqual(32);
@@ -292,9 +275,7 @@ describe('ZodFactory', () => {
                 const results = factory.batch(5);
 
                 results.forEach((result) => {
-                    expect(result.network).toMatch(
-                        /^([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}\/\d{1,3}$/i,
-                    );
+                    expect(result.network).toMatch(/^([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}\/\d{1,3}$/i);
                     const [, prefix] = result.network.split('/');
                     expect(Number(prefix)).toBeGreaterThanOrEqual(0);
                     expect(Number(prefix)).toBeLessThanOrEqual(128);
@@ -310,9 +291,7 @@ describe('ZodFactory', () => {
                 const results = factory.batch(10);
 
                 results.forEach((result) => {
-                    expect(result.id).toMatch(
-                        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
-                    );
+                    expect(result.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
                     expect(() => z.uuid().parse(result.id)).not.toThrow();
                 });
             });
@@ -366,9 +345,7 @@ describe('ZodFactory', () => {
                 const results = factory.batch(5);
 
                 results.forEach((result) => {
-                    expect(() =>
-                        Buffer.from(result.encoded, 'base64'),
-                    ).not.toThrow();
+                    expect(() => Buffer.from(result.encoded, 'base64')).not.toThrow();
                 });
             });
 
@@ -381,9 +358,7 @@ describe('ZodFactory', () => {
                 const results = factory.batch(10);
 
                 results.forEach((result) => {
-                    expect(result.ip).toMatch(
-                        /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/,
-                    );
+                    expect(result.ip).toMatch(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/);
                 });
             });
 
@@ -396,9 +371,7 @@ describe('ZodFactory', () => {
                 const results = factory.batch(5);
 
                 results.forEach((result) => {
-                    expect(result.ip).toMatch(
-                        /^([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$/i,
-                    );
+                    expect(result.ip).toMatch(/^([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}$/i);
                 });
             });
 
@@ -590,9 +563,7 @@ describe('ZodFactory', () => {
                 const results = factory.batch(10);
 
                 results.forEach((result) => {
-                    expect(
-                        result.appointmentDate.getTime(),
-                    ).toBeGreaterThanOrEqual(minDate.getTime());
+                    expect(result.appointmentDate.getTime()).toBeGreaterThanOrEqual(minDate.getTime());
                 });
             });
 
@@ -606,9 +577,7 @@ describe('ZodFactory', () => {
                 const results = factory.batch(10);
 
                 results.forEach((result) => {
-                    expect(result.deadline.getTime()).toBeLessThanOrEqual(
-                        maxDate.getTime(),
-                    );
+                    expect(result.deadline.getTime()).toBeLessThanOrEqual(maxDate.getTime());
                 });
             });
         });
@@ -755,10 +724,7 @@ describe('ZodFactory', () => {
                 expect(result.level1.level2).toBeDefined();
                 expect(result.level1.level2.level3).toBeDefined();
                 // Level 4 should be empty due to depth limit (maxDepth=3 means we stop at depth 3)
-                expect(
-                    Object.keys(result.level1.level2.level3.level4 ?? {})
-                        .length,
-                ).toBe(0);
+                expect(Object.keys(result.level1.level2.level3.level4 ?? {}).length).toBe(0);
             });
         });
 
@@ -845,9 +811,7 @@ describe('ZodFactory', () => {
 
                 expect(Array.isArray(result.users)).toBe(true);
                 result.users.forEach((user) => {
-                    expect(user.id).toMatch(
-                        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
-                    );
+                    expect(user.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
                     expect(typeof user.name).toBe('string');
                     expect(typeof user.active).toBe('boolean');
                 });
@@ -1077,9 +1041,7 @@ describe('ZodFactory', () => {
 
                 const shapeCounts = { circle: 0, rectangle: 0, square: 0 };
                 results.forEach((result) => {
-                    expect(['circle', 'square', 'rectangle']).toContain(
-                        result.shape.type,
-                    );
+                    expect(['circle', 'square', 'rectangle']).toContain(result.shape.type);
                     shapeCounts[result.shape.type]++;
 
                     switch (result.shape.type) {
@@ -1120,9 +1082,7 @@ describe('ZodFactory', () => {
                 const factory = new ZodFactory(schema);
                 const result = factory.build();
 
-                expect(result.user.id).toMatch(
-                    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
-                );
+                expect(result.user.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
                 expect(typeof result.user.name).toBe('string');
                 expect(typeof result.user.active).toBe('boolean');
             });
@@ -1140,12 +1100,8 @@ describe('ZodFactory', () => {
                 const factory = new ZodFactory(schema);
                 const results = factory.batch(20);
 
-                const withNickname = results.filter(
-                    (r) => r.nickname !== undefined,
-                );
-                const withoutNickname = results.filter(
-                    (r) => r.nickname === undefined,
-                );
+                const withNickname = results.filter((r) => r.nickname !== undefined);
+                const withoutNickname = results.filter((r) => r.nickname === undefined);
 
                 expect(withNickname.length).toBeGreaterThan(0);
                 expect(withoutNickname.length).toBeGreaterThan(0);
@@ -1238,10 +1194,7 @@ describe('ZodFactory', () => {
                 id: z.bigint(),
             });
 
-            const factory = new ZodFactory(schema).withTypeHandler(
-                'ZodBigInt',
-                () => 999n,
-            );
+            const factory = new ZodFactory(schema).withTypeHandler('ZodBigInt', () => 999n);
 
             const result = factory.build();
             expect(result.id).toBe(999n);
@@ -1265,8 +1218,7 @@ describe('ZodFactory', () => {
 
         it('should throw for unsupported custom types', () => {
             const customValidator = z.custom<{ special: true }>(
-                (val) =>
-                    typeof val === 'object' && val !== null && 'special' in val,
+                (val) => typeof val === 'object' && val !== null && 'special' in val,
             );
 
             const schema = z.object({
@@ -1274,25 +1226,19 @@ describe('ZodFactory', () => {
             });
 
             const factory = new ZodFactory(schema);
-            expect(() => factory.build()).toThrow(
-                'ZodFactory cannot generate data for z.custom()',
-            );
+            expect(() => factory.build()).toThrow('ZodFactory cannot generate data for z.custom()');
         });
 
         it('should handle custom types with registered handler', () => {
             const customValidator = z.custom<{ special: true }>(
-                (val) =>
-                    typeof val === 'object' && val !== null && 'special' in val,
+                (val) => typeof val === 'object' && val !== null && 'special' in val,
             );
 
             const schema = z.object({
                 custom: customValidator,
             });
 
-            const factory = new ZodFactory(schema).withTypeHandler(
-                'ZodCustom',
-                () => ({ special: true }),
-            );
+            const factory = new ZodFactory(schema).withTypeHandler('ZodCustom', () => ({ special: true }));
 
             const result = factory.build();
             expect(result.custom).toEqual({ special: true });
@@ -1317,10 +1263,7 @@ describe('ZodFactory', () => {
 
         it('should use example from metadata', () => {
             const schema = z.object({
-                config: z
-                    .string()
-                    .describe('Configuration string')
-                    .meta({ example: 'example-config' }),
+                config: z.string().describe('Configuration string').meta({ example: 'example-config' }),
             });
 
             const factory = new ZodFactory(schema);
@@ -1330,9 +1273,7 @@ describe('ZodFactory', () => {
 
         it('should use examples array from metadata', () => {
             const schema = z.object({
-                status: z
-                    .string()
-                    .meta({ examples: ['active', 'inactive', 'pending'] }),
+                status: z.string().meta({ examples: ['active', 'inactive', 'pending'] }),
             });
 
             const factory = new ZodFactory(schema);
@@ -1441,9 +1382,7 @@ describe('ZodFactory', () => {
             const factory = new ZodFactory(schema);
             const result = factory.build();
 
-            expect(result.id).toMatch(
-                /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
-            );
+            expect(result.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
         });
 
         it('should handle top-level url function', () => {
@@ -1480,9 +1419,7 @@ describe('ZodFactory', () => {
             const result = factory.build();
 
             expect(() => Buffer.from(result.encoded, 'base64')).not.toThrow();
-            expect(() =>
-                Buffer.from(result.urlEncoded, 'base64url'),
-            ).not.toThrow();
+            expect(() => Buffer.from(result.urlEncoded, 'base64url')).not.toThrow();
         });
 
         it('should handle top-level date format functions', () => {
@@ -1497,9 +1434,7 @@ describe('ZodFactory', () => {
             const result = factory.build();
 
             expect(result.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-            expect(result.datetime).toMatch(
-                /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/,
-            );
+            expect(result.datetime).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
             expect(result.time).toMatch(/^\d{2}:\d{2}:\d{2}/);
             expect(result.duration).toMatch(/^PT\d+H\d+M\d+S$/);
         });
@@ -1522,9 +1457,7 @@ describe('ZodFactory', () => {
             });
 
             // From schema
-            expect(result.id).toMatch(
-                /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
-            );
+            expect(result.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
             expect(result.email).toMatch(/@/);
 
             // From overrides
@@ -1549,9 +1482,7 @@ describe('ZodFactory', () => {
                 role: 'admin',
             });
 
-            expect(result.id).toMatch(
-                /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
-            );
+            expect(result.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
             expect(result.name).toBe('Default User');
             expect(result.role).toBe('admin');
         });
@@ -1734,9 +1665,7 @@ describe('ZodFactory', () => {
             const results = factory.batch(10);
 
             results.forEach((result) => {
-                expect(result.timestamp).toMatch(
-                    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/,
-                );
+                expect(result.timestamp).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
                 expect(() => new Date(result.timestamp)).not.toThrow();
             });
         });
@@ -1775,9 +1704,7 @@ describe('ZodFactory', () => {
             });
 
             const factory = new ZodFactory(schema);
-            expect(() => factory.build()).toThrow(
-                'ZodNever should never be reached',
-            );
+            expect(() => factory.build()).toThrow('ZodNever should never be reached');
         });
     });
 
@@ -1804,16 +1731,9 @@ describe('ZodFactory', () => {
             });
 
             const factory = new ZodFactory(schema);
-            const iterator = factory.iterate([
-                { status: 'active' },
-                { status: 'inactive' },
-                { status: 'pending' },
-            ]);
+            const iterator = factory.iterate([{ status: 'active' }, { status: 'inactive' }, { status: 'pending' }]);
 
-            const results = Array.from(
-                { length: 6 },
-                () => iterator.next().value,
-            );
+            const results = Array.from({ length: 6 }, () => iterator.next().value);
 
             expect(results[0].status).toBe('active');
             expect(results[1].status).toBe('inactive');
@@ -1831,9 +1751,7 @@ describe('ZodFactory', () => {
             const factory = new ZodFactory(schema);
             const sampler = factory.sample(['a', 'b', 'c']);
 
-            const results = new Set(
-                Array.from({ length: 50 }, () => sampler.next().value),
-            );
+            const results = new Set(Array.from({ length: 50 }, () => sampler.next().value));
             expect(results.has('a')).toBe(true);
             expect(results.has('b')).toBe(true);
             expect(results.has('c')).toBe(true);
@@ -1921,11 +1839,7 @@ describe('ZodFactory', () => {
                         sms: z.boolean(),
                     }),
                     privacy: z.object({
-                        profileVisibility: z.enum([
-                            'public',
-                            'friends',
-                            'private',
-                        ]),
+                        profileVisibility: z.enum(['public', 'friends', 'private']),
                         showEmail: z.boolean(),
                         showPhone: z.boolean(),
                     }),
@@ -1949,9 +1863,7 @@ describe('ZodFactory', () => {
                 expect(user.address.state.length).toBe(2);
                 expect(user.address.zipCode).toMatch(/^\d{5}$/);
                 expect(user.roles.length).toBeGreaterThanOrEqual(1);
-                expect(['light', 'dark', 'auto']).toContain(
-                    user.settings.theme,
-                );
+                expect(['light', 'dark', 'auto']).toContain(user.settings.theme);
             });
         });
 
@@ -1962,13 +1874,7 @@ describe('ZodFactory', () => {
             });
 
             const productSchema = z.object({
-                category: z.enum([
-                    'electronics',
-                    'clothing',
-                    'food',
-                    'books',
-                    'other',
-                ]),
+                category: z.enum(['electronics', 'clothing', 'food', 'books', 'other']),
                 description: z.string(),
                 id: z.uuid(),
                 name: z.string(),
@@ -1990,12 +1896,7 @@ describe('ZodFactory', () => {
                 orderId: z.uuid(),
                 paymentMethod: z.discriminatedUnion('type', [
                     z.object({
-                        brand: z.enum([
-                            'visa',
-                            'mastercard',
-                            'amex',
-                            'discover',
-                        ]),
+                        brand: z.enum(['visa', 'mastercard', 'amex', 'discover']),
                         last4: z.string().length(4),
                         type: z.literal('credit_card'),
                     }),
@@ -2017,13 +1918,7 @@ describe('ZodFactory', () => {
                     street: z.string(),
                     zipCode: z.string(),
                 }),
-                status: z.enum([
-                    'pending',
-                    'processing',
-                    'shipped',
-                    'delivered',
-                    'cancelled',
-                ]),
+                status: z.enum(['pending', 'processing', 'shipped', 'delivered', 'cancelled']),
                 subtotal: moneySchema,
                 tax: moneySchema,
                 timestamps: z.object({
@@ -2041,33 +1936,18 @@ describe('ZodFactory', () => {
             orders.forEach((order) => {
                 expect(() => orderSchema.parse(order)).not.toThrow();
                 expect(order.items.length).toBeGreaterThanOrEqual(1);
-                expect([
-                    'pending',
-                    'processing',
-                    'shipped',
-                    'delivered',
-                    'cancelled',
-                ]).toContain(order.status);
-                expect(['credit_card', 'paypal', 'bank_transfer']).toContain(
-                    order.paymentMethod.type,
-                );
+                expect(['pending', 'processing', 'shipped', 'delivered', 'cancelled']).toContain(order.status);
+                expect(['credit_card', 'paypal', 'bank_transfer']).toContain(order.paymentMethod.type);
 
                 // Verify discriminated union
                 switch (order.paymentMethod.type) {
                     case 'bank_transfer': {
-                        expect(typeof order.paymentMethod.accountNumber).toBe(
-                            'string',
-                        );
+                        expect(typeof order.paymentMethod.accountNumber).toBe('string');
                         break;
                     }
                     case 'credit_card': {
                         expect(order.paymentMethod.last4.length).toBe(4);
-                        expect([
-                            'visa',
-                            'mastercard',
-                            'amex',
-                            'discover',
-                        ]).toContain(order.paymentMethod.brand);
+                        expect(['visa', 'mastercard', 'amex', 'discover']).toContain(order.paymentMethod.brand);
                         break;
                     }
                     case 'paypal': {

@@ -61,10 +61,7 @@ export function hasMethod<K extends PropertyKey>(
  * @param prop The property to check for
  * @returns True if the object has the property
  */
-export function hasProperty<T extends PropertyKey>(
-    obj: unknown,
-    prop: T,
-): obj is Record<T, unknown> {
+export function hasProperty<T extends PropertyKey>(obj: unknown, prop: T): obj is Record<T, unknown> {
     return isObject(obj) && Reflect.has(obj, prop);
 }
 
@@ -105,9 +102,7 @@ export function merge<T>(target: T, ...sources: unknown[]): T {
             const targetValue = output[key];
 
             output[key] =
-                isRecord(sourceValue) && isRecord(targetValue)
-                    ? merge(targetValue, sourceValue)
-                    : sourceValue;
+                isRecord(sourceValue) && isRecord(targetValue) ? merge(targetValue, sourceValue) : sourceValue;
         }
     }
 

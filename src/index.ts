@@ -1,12 +1,8 @@
 /* eslint-disable unicorn/no-new-array */
 
-import { en, Faker, LocaleDefinition, Randomizer } from '@faker-js/faker';
-import {
-    isAsyncFunction,
-    isFunction,
-    isIterator,
-    isRecord,
-} from '@tool-belt/type-predicates';
+import type { LocaleDefinition, Randomizer } from '@faker-js/faker';
+import { en, Faker } from '@faker-js/faker';
+import { isAsyncFunction, isFunction, isIterator, isRecord } from '@tool-belt/type-predicates';
 // Node.js modules - only available in Node.js environment
 let createHash: typeof import('node:crypto').createHash | undefined;
 let fs: typeof import('node:fs') | undefined;
@@ -24,11 +20,7 @@ if (typeof process !== 'undefined' && process.versions?.node) {
     }
 }
 /* eslint-enable @typescript-eslint/no-unnecessary-condition, @typescript-eslint/no-require-imports, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, prefer-destructuring */
-import {
-    ConfigurationError,
-    FixtureError,
-    FixtureValidationError,
-} from './errors';
+import { ConfigurationError, FixtureError, FixtureValidationError } from './errors';
 import { CycleGenerator, SampleGenerator } from './generators';
 import { merge, Ref, validateBatchSize } from './utils';
 import { DEFAULT_MAX_DEPTH } from './constants';
@@ -44,9 +36,7 @@ export { Ref } from './utils';
 
 export type AfterBuildHook<T> = (obj: T) => Promise<T> | T;
 
-export type BeforeBuildHook<T> = (
-    params: Partial<T>,
-) => Partial<T> | Promise<Partial<T>>;
+export type BeforeBuildHook<T> = (params: Partial<T>) => Partial<T> | Promise<Partial<T>>;
 
 export interface CreateManyOptions<T> {
     adapter?: PersistenceAdapter<T>;
@@ -83,10 +73,7 @@ export interface FactoryOptions {
 }
 
 export type FactorySchema<T> = {
-    [K in keyof T]:
-        | Generator<T[K], T[K], T[K]>
-        | Ref<T[K], (...args: unknown[]) => T[K]>
-        | T[K];
+    [K in keyof T]: Generator<T[K], T[K], T[K]> | Ref<T[K], (...args: unknown[]) => T[K]> | T[K];
 };
 
 export interface FixtureConfiguration {
@@ -175,23 +162,15 @@ export interface PersistenceAdapter<T, R = T> {
 export class Factory<
     T,
     O extends FactoryOptions = FactoryOptions,
-    F extends
-        | FactoryFunction<T>
-        | PartialFactoryFunction<T> = FactoryFunction<T>,
+    F extends FactoryFunction<T> | PartialFactoryFunction<T> = FactoryFunction<T>,
 > extends Faker {
-    readonly options?: { maxDepth: number } & Omit<
-        O,
-        'locale' | 'maxDepth' | 'randomizer'
-    >;
+    readonly options?: { maxDepth: number } & Omit<O, 'locale' | 'maxDepth' | 'randomizer'>;
     protected afterBuildHooks: AfterBuildHook<T>[] = [];
     protected beforeBuildHooks: BeforeBuildHook<T>[] = [];
     protected readonly factory: F;
     private defaultAdapter?: PersistenceAdapter<T>;
 
-    constructor(
-        factory: F,
-        { locale = en, randomizer, ...rest }: Partial<O> = {},
-    ) {
+    constructor(factory: F, { locale = en, randomizer, ...rest }: Partial<O> = {}) {
         super({
             locale,
             randomizer,
@@ -248,19 +227,11 @@ export class Factory<
 
         let results: T[];
         if (kwargs) {
-            const generator = this.iterate<Partial<T>>(
-                Array.isArray(kwargs) ? kwargs : ([kwargs] as Partial<T>[]),
-            );
+            const generator = this.iterate<Partial<T>>(Array.isArray(kwargs) ? kwargs : ([kwargs] as Partial<T>[]));
 
-            results = new Array(size)
-                .fill(null)
-                .map((_, i) =>
-                    this.#generate(i, generator.next().value, 0),
-                ) as T[];
+            results = new Array(size).fill(null).map((_, i) => this.#generate(i, generator.next().value, 0)) as T[];
         } else {
-            results = new Array(size)
-                .fill(null)
-                .map((_, i) => this.#generate(i, undefined, 0)) as T[];
+            results = new Array(size).fill(null).map((_, i) => this.#generate(i, undefined, 0)) as T[];
         }
 
         if (results.some((result) => result instanceof Promise)) {
@@ -328,10 +299,7 @@ export class Factory<
      * @throws {FixtureError} If fixture operations fail
      * @throws {FixtureValidationError} If fixture validation fails
      */
-    build = (
-        kwargs?: Partial<T>,
-        options?: Partial<O>,
-    ): F extends FactoryFunction<T> ? T : Partial<T> => {
+    build = (kwargs?: Partial<T>, options?: Partial<O>): F extends FactoryFunction<T> ? T : Partial<T> => {
         if (isAsyncFunction(this.factory)) {
             throw new ConfigurationError(
                 'Async factory function detected. Use buildAsync() method to build instances with async factories.',
@@ -411,11 +379,7 @@ export class Factory<
                     ? mergedOptions.generateFixture
                     : this.getDefaultFixturePath();
 
-            return this.buildWithFixtureAsync(
-                fixturePath,
-                kwargs,
-                mergedOptions,
-            );
+            return this.buildWithFixtureAsync(fixturePath, kwargs, mergedOptions);
         }
 
         // Normal build without fixtures
@@ -454,12 +418,7 @@ export class Factory<
                       const composedValues = Object.fromEntries(
                           Object.entries(composition).map(
                               ([key, value]) =>
-                                  [
-                                      key,
-                                      value instanceof Factory
-                                          ? value.build()
-                                          : value,
-                                  ] as [string, unknown],
+                                  [key, value instanceof Factory ? value.build() : value] as [string, unknown],
                           ),
                       );
                       return {
@@ -476,12 +435,7 @@ export class Factory<
                       const composedValues = Object.fromEntries(
                           Object.entries(composition).map(
                               ([key, value]) =>
-                                  [
-                                      key,
-                                      value instanceof Factory
-                                          ? value.build()
-                                          : value,
-                                  ] as [string, unknown],
+                                  [key, value instanceof Factory ? value.build() : value] as [string, unknown],
                           ),
                       );
                       return {
@@ -564,11 +518,7 @@ export class Factory<
      * );
      * ```
      */
-    async createMany(
-        size: number,
-        kwargs?: Partial<T> | Partial<T>[],
-        options?: CreateManyOptions<T>,
-    ): Promise<T[]> {
+    async createMany(size: number, kwargs?: Partial<T> | Partial<T>[], options?: CreateManyOptions<T>): Promise<T[]> {
         const adapter = options?.adapter ?? this.defaultAdapter;
         if (!adapter) {
             throw new ConfigurationError(
@@ -599,10 +549,7 @@ export class Factory<
                     kwargs,
                 ) as unknown as FactorySchema<U>;
                 const extendedValues = factoryFn(factory, iteration, kwargs);
-                if (
-                    extendedValues instanceof Promise ||
-                    baseValues instanceof Promise
-                ) {
+                if (extendedValues instanceof Promise || baseValues instanceof Promise) {
                     return Promise.resolve(baseValues).then((base) =>
                         Promise.resolve(extendedValues).then((extended) => ({
                             ...base,
@@ -643,11 +590,7 @@ export class Factory<
     partial(): Factory<Partial<T>> {
         return new Factory<Partial<T>>(
             (factory, iteration, kwargs) => {
-                const fullValues = this.factory(
-                    factory as unknown as Factory<T>,
-                    iteration,
-                    kwargs,
-                );
+                const fullValues = this.factory(factory as unknown as Factory<T>, iteration, kwargs);
                 if (fullValues instanceof Promise) {
                     return fullValues as Promise<FactorySchema<Partial<T>>>;
                 }
@@ -732,18 +675,13 @@ export class Factory<
             const existing = this.readFixture(parsedPath.fullPath);
             if (existing) {
                 this.validateFixture(existing, fixtureConfig);
-                return existing.data as F extends FactoryFunction<T>
-                    ? T
-                    : Partial<T>;
+                return existing.data as F extends FactoryFunction<T> ? T : Partial<T>;
             }
         } catch (error) {
             if (error instanceof FixtureError) {
                 throw error;
             }
-            if (
-                error instanceof FixtureValidationError &&
-                fixtureConfig.validateSignature
-            ) {
+            if (error instanceof FixtureValidationError && fixtureConfig.validateSignature) {
                 throw error;
             }
         }
@@ -782,18 +720,13 @@ export class Factory<
             const existing = this.readFixture(parsedPath.fullPath);
             if (existing) {
                 this.validateFixture(existing, fixtureConfig);
-                return existing.data as F extends FactoryFunction<T>
-                    ? T
-                    : Partial<T>;
+                return existing.data as F extends FactoryFunction<T> ? T : Partial<T>;
             }
         } catch (error) {
             if (error instanceof FixtureError) {
                 throw error;
             }
-            if (
-                error instanceof FixtureValidationError &&
-                fixtureConfig.validateSignature
-            ) {
+            if (error instanceof FixtureValidationError && fixtureConfig.validateSignature) {
                 throw error;
             }
         }
@@ -815,13 +748,9 @@ export class Factory<
         return result;
     }
 
-    protected calculateSignature(
-        config: Required<FixtureConfiguration>,
-    ): string {
+    protected calculateSignature(config: Required<FixtureConfiguration>): string {
         if (!createHash) {
-            throw new FixtureError(
-                'Fixture functionality is not available in browser environments',
-            );
+            throw new FixtureError('Fixture functionality is not available in browser environments');
         }
         const hash = createHash('sha256');
 
@@ -853,35 +782,20 @@ export class Factory<
      * @param isAsync - Whether to create async handlers
      * @returns Depth-limited proxy factory for recursive generation
      */
-    protected createDepthLimitedProxy(
-        depth: number,
-        isAsync: boolean,
-    ): Factory<T> {
+    protected createDepthLimitedProxy(depth: number, isAsync: boolean): Factory<T> {
         return new Proxy(this, {
             get: (target: Factory<T, O, F>, prop: string | symbol) => {
                 if (prop === 'build') {
                     return isAsync
-                        ? (buildKwargs?: Partial<T>) =>
-                              target.#generateAsync(0, buildKwargs, depth + 1)
-                        : (buildKwargs?: Partial<T>) =>
-                              target.#generate(0, buildKwargs, depth + 1);
+                        ? (buildKwargs?: Partial<T>) => target.#generateAsync(0, buildKwargs, depth + 1)
+                        : (buildKwargs?: Partial<T>) => target.#generate(0, buildKwargs, depth + 1);
                 }
                 if (prop === 'batch') {
                     return isAsync
-                        ? (
-                              size: number,
-                              batchKwargs?: Partial<T> | Partial<T>[],
-                          ) => target.#batchAsync(size, batchKwargs, depth)
-                        : (
-                              size: number,
-                              batchKwargs?: Partial<T> | Partial<T>[],
-                          ) =>
-                              target.#batch(
-                                  target as unknown as Factory<T>,
-                                  size,
-                                  batchKwargs,
-                                  depth,
-                              );
+                        ? (size: number, batchKwargs?: Partial<T> | Partial<T>[]) =>
+                              target.#batchAsync(size, batchKwargs, depth)
+                        : (size: number, batchKwargs?: Partial<T> | Partial<T>[]) =>
+                              target.#batch(target as unknown as Factory<T>, size, batchKwargs, depth);
                 }
                 return Reflect.get(target, prop) as unknown;
             },
@@ -901,8 +815,7 @@ export class Factory<
             directory: this.options?.fixtures?.directory ?? '__fixtures__',
             includeSource: this.options?.fixtures?.includeSource ?? true,
             useSubdirectory: this.options?.fixtures?.useSubdirectory ?? true,
-            validateSignature:
-                this.options?.fixtures?.validateSignature ?? true,
+            validateSignature: this.options?.fixtures?.validateSignature ?? true,
         };
     }
 
@@ -920,28 +833,19 @@ export class Factory<
         config: Required<FixtureConfiguration>,
     ): { fixturesDir: string; fullPath: string } {
         if (!path) {
-            throw new FixtureError(
-                'Fixture functionality is not available in browser environments',
-            );
+            throw new FixtureError('Fixture functionality is not available in browser environments');
         }
         if (!filePath.trim()) {
             throw new FixtureError('Fixture file path cannot be empty');
         }
 
-        const resolvedPath = path.isAbsolute(filePath)
-            ? filePath
-            : path.join(config.basePath, filePath);
+        const resolvedPath = path.isAbsolute(filePath) ? filePath : path.join(config.basePath, filePath);
 
         const dir = path.dirname(resolvedPath);
         const fileName = path.basename(resolvedPath);
         const ext = path.extname(fileName);
 
-        const jsonFileName =
-            ext === '.json'
-                ? fileName
-                : ext
-                  ? fileName.replace(ext, '.json')
-                  : `${fileName}.json`;
+        const jsonFileName = ext === '.json' ? fileName : ext ? fileName.replace(ext, '.json') : `${fileName}.json`;
 
         let fixturesDir: string;
         let fullPath: string;
@@ -961,9 +865,7 @@ export class Factory<
 
     protected readFixture(fullPath: string): FixtureMetadata | null {
         if (!fs) {
-            throw new FixtureError(
-                'Fixture functionality is not available in browser environments',
-            );
+            throw new FixtureError('Fixture functionality is not available in browser environments');
         }
         if (!fs.existsSync(fullPath)) {
             return null;
@@ -973,16 +875,11 @@ export class Factory<
             const content = fs.readFileSync(fullPath, 'utf8');
             return JSON.parse(content) as FixtureMetadata;
         } catch (error) {
-            throw new FixtureError(
-                `Failed to read fixture from ${fullPath}: ${(error as Error).message}`,
-            );
+            throw new FixtureError(`Failed to read fixture from ${fullPath}: ${(error as Error).message}`);
         }
     }
 
-    protected validateFixture(
-        metadata: FixtureMetadata,
-        config: Required<FixtureConfiguration>,
-    ): void {
+    protected validateFixture(metadata: FixtureMetadata, config: Required<FixtureConfiguration>): void {
         if (!config.validateSignature) {
             return;
         }
@@ -1002,9 +899,7 @@ export class Factory<
         config: Required<FixtureConfiguration>,
     ): void {
         if (!fs) {
-            throw new FixtureError(
-                'Fixture functionality is not available in browser environments',
-            );
+            throw new FixtureError('Fixture functionality is not available in browser environments');
         }
         try {
             if (!fs.existsSync(parsedPath.fixturesDir)) {
@@ -1018,23 +913,13 @@ export class Factory<
                 version: 1,
             };
 
-            fs.writeFileSync(
-                parsedPath.fullPath,
-                JSON.stringify(metadata, null, 2),
-            );
+            fs.writeFileSync(parsedPath.fullPath, JSON.stringify(metadata, null, 2));
         } catch (error) {
-            throw new FixtureError(
-                `Failed to write fixture to ${parsedPath.fullPath}: ${(error as Error).message}`,
-            );
+            throw new FixtureError(`Failed to write fixture to ${parsedPath.fullPath}: ${(error as Error).message}`);
         }
     }
 
-    #batch(
-        target: Factory<T>,
-        size: number,
-        batchKwargs: Partial<T> | Partial<T>[] | undefined,
-        depth: number,
-    ): T[] {
+    #batch(target: Factory<T>, size: number, batchKwargs: Partial<T> | Partial<T>[] | undefined, depth: number): T[] {
         if (this.isDepthExceeded(depth + 1)) {
             return null as unknown as T[];
         }
@@ -1044,19 +929,13 @@ export class Factory<
         }
         if (batchKwargs) {
             const generator = target.iterate<Partial<T>>(
-                Array.isArray(batchKwargs)
-                    ? batchKwargs
-                    : ([batchKwargs] as Partial<T>[]),
+                Array.isArray(batchKwargs) ? batchKwargs : ([batchKwargs] as Partial<T>[]),
             );
             return new Array(size)
                 .fill(null)
-                .map((_, i) =>
-                    target.#generate(i, generator.next().value, depth + 1),
-                ) as T[];
+                .map((_, i) => target.#generate(i, generator.next().value, depth + 1)) as T[];
         }
-        return new Array(size)
-            .fill(null)
-            .map((_, i) => target.#generate(i, undefined, depth + 1)) as T[];
+        return new Array(size).fill(null).map((_, i) => target.#generate(i, undefined, depth + 1)) as T[];
     }
 
     async #batchAsync(
@@ -1074,30 +953,20 @@ export class Factory<
         }
         if (batchKwargs) {
             const generator = this.iterate<Partial<T>>(
-                Array.isArray(batchKwargs)
-                    ? batchKwargs
-                    : ([batchKwargs] as Partial<T>[]),
+                Array.isArray(batchKwargs) ? batchKwargs : ([batchKwargs] as Partial<T>[]),
             );
             const promises = new Array(size)
                 .fill(null)
-                .map((_, i) =>
-                    this.#generateAsync(i, generator.next().value, depth + 1),
-                );
+                .map((_, i) => this.#generateAsync(i, generator.next().value, depth + 1));
             return Promise.all(promises);
         }
 
-        const promises = new Array(size)
-            .fill(null)
-            .map((_, i) => this.#generateAsync(i, undefined, depth + 1));
+        const promises = new Array(size).fill(null).map((_, i) => this.#generateAsync(i, undefined, depth + 1));
 
         return Promise.all(promises);
     }
 
-    #generate(
-        iteration: number,
-        kwargs?: Partial<T>,
-        depth = 0,
-    ): Promise<T> | T {
+    #generate(iteration: number, kwargs?: Partial<T>, depth = 0): Promise<T> | T {
         if (this.isDepthExceeded(depth)) {
             return null as T;
         }
@@ -1106,36 +975,22 @@ export class Factory<
         const defaults = this.factory(depthLimitedFactory, iteration, kwargs);
 
         if (kwargs) {
-            return merge(
-                this.#parseValue(defaults),
-                this.#parseValue(kwargs),
-            ) as T;
+            return merge(this.#parseValue(defaults), this.#parseValue(kwargs)) as T;
         }
 
         return this.#parseValue(defaults) as T;
     }
 
-    async #generateAsync(
-        iteration: number,
-        kwargs?: Partial<T>,
-        depth = 0,
-    ): Promise<T> {
+    async #generateAsync(iteration: number, kwargs?: Partial<T>, depth = 0): Promise<T> {
         if (this.isDepthExceeded(depth)) {
             return null as T;
         }
 
         const depthLimitedFactory = this.createDepthLimitedProxy(depth, true);
-        const defaults = await this.factory(
-            depthLimitedFactory,
-            iteration,
-            kwargs,
-        );
+        const defaults = await this.factory(depthLimitedFactory, iteration, kwargs);
 
         if (kwargs) {
-            return merge(
-                await this.#parseValueAsync(defaults),
-                await this.#parseValueAsync(kwargs),
-            ) as T;
+            return merge(await this.#parseValueAsync(defaults), await this.#parseValueAsync(kwargs)) as T;
         }
 
         return (await this.#parseValueAsync(defaults)) as T;
@@ -1153,16 +1008,12 @@ export class Factory<
         if (isRecord(value)) {
             const result: Record<string | symbol, unknown> = {};
 
-            for (const [key, val] of Object.entries(
-                value as Record<string, unknown>,
-            )) {
+            for (const [key, val] of Object.entries(value as Record<string, unknown>)) {
                 result[key] = this.#parseValue(val);
             }
 
             for (const sym of Object.getOwnPropertySymbols(value)) {
-                result[sym] = this.#parseValue(
-                    (value as Record<symbol, unknown>)[sym],
-                );
+                result[sym] = this.#parseValue((value as Record<symbol, unknown>)[sym]);
             }
 
             return result;
@@ -1183,16 +1034,12 @@ export class Factory<
         if (isRecord(value)) {
             const result: Record<string | symbol, unknown> = {};
 
-            for (const [key, val] of Object.entries(
-                value as Record<string, unknown>,
-            )) {
+            for (const [key, val] of Object.entries(value as Record<string, unknown>)) {
                 result[key] = await this.#parseValueAsync(val);
             }
 
             for (const sym of Object.getOwnPropertySymbols(value)) {
-                result[sym] = await this.#parseValueAsync(
-                    (value as Record<symbol, unknown>)[sym],
-                );
+                result[sym] = await this.#parseValueAsync((value as Record<symbol, unknown>)[sym]);
             }
 
             return result;

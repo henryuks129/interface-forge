@@ -46,9 +46,7 @@ describe('Factory Fixture Functionality', () => {
             expect(typeof result.age).toBe('number');
 
             // Check fixture file content
-            const fixtureContent = JSON.parse(
-                fs.readFileSync(fixturePath, 'utf8'),
-            );
+            const fixtureContent = JSON.parse(fs.readFileSync(fixturePath, 'utf8'));
             expect(fixtureContent).toHaveProperty('signature');
             expect(fixtureContent).toHaveProperty('createdAt');
             expect(fixtureContent).toHaveProperty('version');
@@ -91,10 +89,7 @@ describe('Factory Fixture Functionality', () => {
                 },
             );
 
-            const result = factory.build(
-                { role: 'admin' },
-                { generateFixture: 'admin-user' },
-            );
+            const result = factory.build({ role: 'admin' }, { generateFixture: 'admin-user' });
 
             expect(result.role).toBe('admin');
             expect(result.name).toBeDefined();
@@ -114,11 +109,7 @@ describe('Factory Fixture Functionality', () => {
                 generateFixture: 'nested/deep/path/data',
             });
 
-            const fixturePath = path.join(
-                tempDir,
-                'nested/deep/path/__fixtures__',
-                'data.json',
-            );
+            const fixturePath = path.join(tempDir, 'nested/deep/path/__fixtures__', 'data.json');
             expect(fs.existsSync(fixturePath)).toBe(true);
             expect(result).toHaveProperty('value');
         });
@@ -135,11 +126,7 @@ describe('Factory Fixture Functionality', () => {
 
             factory.build(undefined, { generateFixture: 'no-extension' });
 
-            const fixturePath = path.join(
-                tempDir,
-                '__fixtures__',
-                'no-extension.json',
-            );
+            const fixturePath = path.join(tempDir, '__fixtures__', 'no-extension.json');
             expect(fs.existsSync(fixturePath)).toBe(true);
         });
 
@@ -190,9 +177,7 @@ describe('Factory Fixture Functionality', () => {
             factory.build();
 
             // No fixtures directory should be created
-            expect(fs.existsSync(path.join(tempDir, '__fixtures__'))).toBe(
-                false,
-            );
+            expect(fs.existsSync(path.join(tempDir, '__fixtures__'))).toBe(false);
         });
 
         it('should throw FixtureValidationError when factory signature changes', () => {
@@ -283,11 +268,7 @@ describe('Factory Fixture Functionality', () => {
             expect(typeof result.data).toBe('string');
 
             // Verify fixture was created
-            const fixturePath = path.join(
-                tempDir,
-                '__fixtures__',
-                'async-data.json',
-            );
+            const fixturePath = path.join(tempDir, '__fixtures__', 'async-data.json');
             expect(fs.existsSync(fixturePath)).toBe(true);
         });
 
@@ -331,11 +312,7 @@ describe('Factory Fixture Functionality', () => {
 
             factory.build(undefined, { generateFixture: 'custom-dir' });
 
-            const fixturePath = path.join(
-                tempDir,
-                'my-fixtures',
-                'custom-dir.json',
-            );
+            const fixturePath = path.join(tempDir, 'my-fixtures', 'custom-dir.json');
             expect(fs.existsSync(fixturePath)).toBe(true);
         });
 
@@ -375,12 +352,7 @@ describe('Factory Fixture Functionality', () => {
             factory.build(undefined, { generateFixture: absolutePath });
 
             // The fixture should be created at custom/__fixtures__/location.json
-            const fixturePath = path.join(
-                tempDir,
-                'custom',
-                '__fixtures__',
-                'location.json',
-            );
+            const fixturePath = path.join(tempDir, 'custom', '__fixtures__', 'location.json');
             expect(fs.existsSync(fixturePath)).toBe(true);
         });
 
@@ -404,10 +376,7 @@ describe('Factory Fixture Functionality', () => {
             expect(fs.existsSync(fixturePath)).toBe(true);
 
             // Should NOT create __fixtures__ subdirectory
-            const subdirPath = path.join(
-                tempDir,
-                'direct/path/__fixtures__/file.json',
-            );
+            const subdirPath = path.join(tempDir, 'direct/path/__fixtures__/file.json');
             expect(fs.existsSync(subdirPath)).toBe(false);
         });
     });
@@ -527,11 +496,7 @@ describe('Factory Fixture Functionality', () => {
             expect(() => UserSchema.parse(result)).not.toThrow();
 
             // Check fixture was created
-            const fixturePath = path.join(
-                tempDir,
-                '__fixtures__',
-                'zod-user.json',
-            );
+            const fixturePath = path.join(tempDir, '__fixtures__', 'zod-user.json');
             expect(fs.existsSync(fixturePath)).toBe(true);
         });
 
@@ -546,10 +511,9 @@ describe('Factory Fixture Functionality', () => {
             } as any);
 
             // Create factory with different schema
-            const factory2 = new ZodFactory(
-                z.object({ email: z.string(), name: z.string() }),
-                { fixtures: { basePath: tempDir } },
-            );
+            const factory2 = new ZodFactory(z.object({ email: z.string(), name: z.string() }), {
+                fixtures: { basePath: tempDir },
+            });
 
             // Should throw because schema changed
             expect(() =>
@@ -593,9 +557,7 @@ describe('Factory Fixture Functionality', () => {
                 },
             );
 
-            expect(() =>
-                factory.build(undefined, { generateFixture: 'error-test' }),
-            ).toThrow(FixtureError);
+            expect(() => factory.build(undefined, { generateFixture: 'error-test' })).toThrow(FixtureError);
         });
 
         it('should handle corrupted fixture files gracefully', () => {
@@ -613,15 +575,10 @@ describe('Factory Fixture Functionality', () => {
             // Create a corrupted fixture file
             const fixturePath = path.join(tempDir, '__fixtures__');
             fs.mkdirSync(fixturePath, { recursive: true });
-            fs.writeFileSync(
-                path.join(fixturePath, 'corrupted.json'),
-                'invalid json',
-            );
+            fs.writeFileSync(path.join(fixturePath, 'corrupted.json'), 'invalid json');
 
             // Should throw FixtureError when trying to read corrupted file
-            expect(() =>
-                factory.build(undefined, { generateFixture: 'corrupted' }),
-            ).toThrow(FixtureError);
+            expect(() => factory.build(undefined, { generateFixture: 'corrupted' })).toThrow(FixtureError);
         });
     });
 
@@ -741,11 +698,7 @@ describe('Factory Fixture Functionality', () => {
             // Should generate fixture even without passing options to build
             const result = factory.build();
 
-            const fixturePath = path.join(
-                tempDir,
-                '__fixtures__',
-                'constructor-fixture.json',
-            );
+            const fixturePath = path.join(tempDir, '__fixtures__', 'constructor-fixture.json');
             expect(fs.existsSync(fixturePath)).toBe(true);
 
             // Second call should return cached data
@@ -768,16 +721,8 @@ describe('Factory Fixture Functionality', () => {
             factory.build(undefined, { generateFixture: 'override-fixture' });
 
             // Should create override fixture, not default
-            expect(
-                fs.existsSync(
-                    path.join(tempDir, '__fixtures__', 'override-fixture.json'),
-                ),
-            ).toBe(true);
-            expect(
-                fs.existsSync(
-                    path.join(tempDir, '__fixtures__', 'default-fixture.json'),
-                ),
-            ).toBe(false);
+            expect(fs.existsSync(path.join(tempDir, '__fixtures__', 'override-fixture.json'))).toBe(true);
+            expect(fs.existsSync(path.join(tempDir, '__fixtures__', 'default-fixture.json'))).toBe(false);
         });
     });
 });

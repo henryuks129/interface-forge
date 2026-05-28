@@ -64,10 +64,7 @@ interface Product {
     sku: string;
 }
 
-async function checkPriceRange(
-    category: string,
-    price: number,
-): Promise<boolean> {
+async function checkPriceRange(category: string, price: number): Promise<boolean> {
     await new Promise((resolve) => setTimeout(resolve, 10));
     const priceRanges: Record<string, [number, number]> = {
         books: [5, 100],
@@ -84,11 +81,7 @@ async function validateSKU(sku: string): Promise<boolean> {
 }
 
 const ProductFactory = new Factory<Product>((factory) => ({
-    category: factory.helpers.arrayElement([
-        'electronics',
-        'books',
-        'clothing',
-    ]),
+    category: factory.helpers.arrayElement(['electronics', 'books', 'clothing']),
     id: factory.string.uuid(),
     isApproved: false,
     name: factory.commerce.productName(),
@@ -111,14 +104,9 @@ const ProductFactory = new Factory<Product>((factory) => ({
             throw new Error(`Invalid SKU format: ${product.sku}`);
         }
 
-        const isPriceValid = await checkPriceRange(
-            product.category,
-            product.price,
-        );
+        const isPriceValid = await checkPriceRange(product.category, product.price);
         if (!isPriceValid) {
-            throw new Error(
-                `Price ${product.price} is out of range for category ${product.category}`,
-            );
+            throw new Error(`Price ${product.price} is out of range for category ${product.category}`);
         }
 
         product.isApproved = true;
@@ -128,10 +116,7 @@ const ProductFactory = new Factory<Product>((factory) => ({
 try {
     ProductFactory.build();
 } catch (error) {
-    console.log(
-        'Expected error:',
-        error instanceof Error ? error.message : String(error),
-    );
+    console.log('Expected error:', error instanceof Error ? error.message : String(error));
 }
 
 const createProducts = async () => {
@@ -145,10 +130,7 @@ const createProducts = async () => {
             sku: 'INVALID-SKU',
         });
     } catch (error) {
-        console.log(
-            'Validation error:',
-            error instanceof Error ? error.message : String(error),
-        );
+        console.log('Validation error:', error instanceof Error ? error.message : String(error));
     }
 };
 
@@ -184,22 +166,13 @@ const BlogPostFactory = new Factory<BlogPost>((factory) => ({
             const contentLower = params.content.toLowerCase();
             const autoTags: string[] = [];
 
-            if (
-                contentLower.includes('javascript') ||
-                contentLower.includes('typescript')
-            ) {
+            if (contentLower.includes('javascript') || contentLower.includes('typescript')) {
                 autoTags.push('programming');
             }
-            if (
-                contentLower.includes('react') ||
-                contentLower.includes('vue')
-            ) {
+            if (contentLower.includes('react') || contentLower.includes('vue')) {
                 autoTags.push('frontend');
             }
-            if (
-                contentLower.includes('node') ||
-                contentLower.includes('express')
-            ) {
+            if (contentLower.includes('node') || contentLower.includes('express')) {
                 autoTags.push('backend');
             }
 
@@ -221,8 +194,7 @@ const BlogPostFactory = new Factory<BlogPost>((factory) => ({
     });
 
 const draftPost = BlogPostFactory.build({
-    content:
-        'TypeScript is a powerful language that adds static typing to JavaScript...',
+    content: 'TypeScript is a powerful language that adds static typing to JavaScript...',
     title: 'Getting Started with TypeScript',
 });
 console.log('Draft post:', {
@@ -274,18 +246,13 @@ const OrderFactory = new Factory<Order>((factory) => ({
         return params;
     })
     .afterBuild((order) => {
-        order.subtotal = order.items.reduce(
-            (sum, item) => sum + item.price * item.quantity,
-            0,
-        );
+        order.subtotal = order.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
         order.tax = Number.parseFloat((order.subtotal * 0.1).toFixed(2));
 
         order.shipping = order.subtotal >= 100 ? 0 : 10;
 
-        order.total = Number.parseFloat(
-            (order.subtotal + order.tax + order.shipping).toFixed(2),
-        );
+        order.total = Number.parseFloat((order.subtotal + order.tax + order.shipping).toFixed(2));
 
         if (order.total < 10) {
             throw new Error('Order total must be at least $10');
@@ -326,9 +293,7 @@ const AddressFactory = new Factory<Address>((factory) => ({
 
     if (!address.zipCode) {
         const range = stateZipRanges[address.state] ?? [10_000, 99_999];
-        const zip = Math.floor(
-            Math.random() * (range[1] - range[0]) + range[0],
-        );
+        const zip = Math.floor(Math.random() * (range[1] - range[0]) + range[0]);
         address.zipCode = zip.toString().padStart(5, '0');
     }
 
@@ -360,9 +325,7 @@ const CustomerFactory = new Factory<Customer>((factory) => ({
 
 const customer = CustomerFactory.build({ sameAsBilling: true });
 console.log('Customer addresses:', {
-    areSame:
-        JSON.stringify(customer.billingAddress) ===
-        JSON.stringify(customer.shippingAddress),
+    areSame: JSON.stringify(customer.billingAddress) === JSON.stringify(customer.shippingAddress),
     billing: customer.billingAddress,
     shipping: customer.shippingAddress,
 });

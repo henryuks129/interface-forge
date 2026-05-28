@@ -14,9 +14,8 @@ const FeatureList: FeatureItem[] = [
         icon: '🔒',
         description: (
             <>
-                Generate mock data that perfectly matches your TypeScript
-                interfaces. Get full IntelliSense support and compile-time type
-                checking for all your factories.
+                Generate mock data that perfectly matches your TypeScript interfaces. Get full IntelliSense support and
+                compile-time type checking for all your factories.
             </>
         ),
     },
@@ -25,9 +24,8 @@ const FeatureList: FeatureItem[] = [
         icon: '🎭',
         description: (
             <>
-                Built on top of the popular Faker.js library, giving you access
-                to realistic fake data for names, addresses, dates, and more out
-                of the box.
+                Built on top of the popular Faker.js library, giving you access to realistic fake data for names,
+                addresses, dates, and more out of the box.
             </>
         ),
     },
@@ -36,9 +34,8 @@ const FeatureList: FeatureItem[] = [
         icon: '⚡',
         description: (
             <>
-                Optional Zod schema integration allows you to generate mock data
-                directly from your runtime validation schemas with zero
-                additional configuration.
+                Optional Zod schema integration allows you to generate mock data directly from your runtime validation
+                schemas with zero additional configuration.
             </>
         ),
     },

@@ -57,25 +57,19 @@ console.log('User:', user.name);
 console.log('Posts by user:', user.posts.length);
 console.log('Favorite post:', user.favoritePost?.title);
 
-const DepartmentFactory: Factory<Department> = new Factory<Department>(
-    (faker) => ({
-        employees: faker.use(() => EmployeeFactory.batch(5)),
-        id: faker.string.uuid(),
-        manager: faker.use(() => EmployeeFactory.build()),
-        name: faker.commerce.department(),
-    }),
-);
+const DepartmentFactory: Factory<Department> = new Factory<Department>((faker) => ({
+    employees: faker.use(() => EmployeeFactory.batch(5)),
+    id: faker.string.uuid(),
+    manager: faker.use(() => EmployeeFactory.build()),
+    name: faker.commerce.department(),
+}));
 
 const EmployeeFactory: Factory<Employee> = new Factory<Employee>((faker) => ({
     department: faker.use(() => DepartmentFactory.build()),
     id: faker.string.uuid(),
     name: faker.person.fullName(),
-    subordinates: faker.use(() =>
-        EmployeeFactory.batch(faker.number.int({ max: 3, min: 0 })),
-    ),
-    supervisor: faker.datatype.boolean({ probability: 0.8 })
-        ? faker.use(() => EmployeeFactory.build())
-        : undefined,
+    subordinates: faker.use(() => EmployeeFactory.batch(faker.number.int({ max: 3, min: 0 }))),
+    supervisor: faker.datatype.boolean({ probability: 0.8 }) ? faker.use(() => EmployeeFactory.build()) : undefined,
 }));
 
 const LimitedUserFactory: Factory<User> = new Factory<User>(
@@ -116,9 +110,7 @@ const createUserWithOwnPosts = () => {
 const userWithOwnPosts = createUserWithOwnPosts();
 console.log(
     'User owns all posts:',
-    userWithOwnPosts.posts.every(
-        (post: Post) => post.author.id === userWithOwnPosts.id,
-    ),
+    userWithOwnPosts.posts.every((post: Post) => post.author.id === userWithOwnPosts.id),
 );
 
 interface GraphNode {
@@ -127,15 +119,11 @@ interface GraphNode {
     value: number;
 }
 
-const GraphNodeFactory: Factory<GraphNode> = new Factory<GraphNode>(
-    (faker) => ({
-        connections: faker.use(() =>
-            GraphNodeFactory.batch(faker.number.int({ max: 3, min: 0 })),
-        ),
-        id: faker.string.uuid(),
-        value: faker.number.int({ max: 100, min: 1 }),
-    }),
-);
+const GraphNodeFactory: Factory<GraphNode> = new Factory<GraphNode>((faker) => ({
+    connections: faker.use(() => GraphNodeFactory.batch(faker.number.int({ max: 3, min: 0 }))),
+    id: faker.string.uuid(),
+    value: faker.number.int({ max: 100, min: 1 }),
+}));
 
 const graphRoot = new Factory<GraphNode>(
     (faker) => ({

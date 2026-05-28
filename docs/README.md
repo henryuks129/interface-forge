@@ -7,7 +7,7 @@ This directory contains the documentation for Interface Forge, built with [Docus
 ### Prerequisites
 
 - Node.js v18 or higher
-- pnpm v8 or higher
+- pnpm v11 or higher
 
 ### Development
 
@@ -16,7 +16,7 @@ This directory contains the documentation for Interface Forge, built with [Docus
 pnpm install
 
 # Start the development server
-pnpm start
+pnpm docs:start
 
 # The site will be available at http://localhost:3000/interface-forge/
 ```
@@ -25,15 +25,15 @@ pnpm start
 
 ```bash
 # Build the documentation
-pnpm build
+pnpm docs:build
 
 # Preview the production build locally
-pnpm serve
+pnpm docs:serve
 ```
 
 ## 📁 Structure
 
-```
+```text
 docs/
 ├── docs/                    # Documentation content
 │   ├── getting-started/     # Getting started guides
@@ -66,7 +66,7 @@ The documentation uses a GitHub-inspired theme. You can customize:
 
 The documentation is automatically deployed to GitHub Pages when changes are pushed to the `main` branch.
 
-- **Production**: https://goldziher.github.io/interface-forge/
+- **Production**: <https://goldziher.github.io/interface-forge/>
 - **Pull Request Previews**: Build artifacts are uploaded for each PR
 
 ## 🛠️ Troubleshooting
@@ -76,7 +76,7 @@ The documentation is automatically deployed to GitHub Pages when changes are pus
 If port 3000 is already in use:
 
 ```bash
-pnpm start -- --port 3001
+pnpm docs:start -- --port 3001
 ```
 
 ### Build failures
@@ -89,6 +89,7 @@ pnpm start -- --port 3001
     ```
 
 2. Check for broken links:
+
     ```bash
     pnpm build -- --no-minify
     ```

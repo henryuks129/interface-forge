@@ -1,7 +1,5 @@
 export class CircularReferenceError extends Error {
-    constructor(
-        message = 'Circular reference detected in factory composition',
-    ) {
+    constructor(message = 'Circular reference detected in factory composition') {
         super(message);
         this.name = 'CircularReferenceError';
     }

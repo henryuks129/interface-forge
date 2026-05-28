@@ -1,11 +1,11 @@
 <div align="center">
   <img src="https://raw.githubusercontent.com/Goldziher/interface-forge/main/assets/logo.svg" alt="Interface-Forge Logo" width="120" height="120">
-  
-  # Interface-Forge
+
+# Interface-Forge
 
 [![npm version](https://img.shields.io/npm/v/interface-forge.svg)](https://www.npmjs.com/package/interface-forge)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.x-blue)](https://www.typescriptlang.org/)
 [![Downloads](https://img.shields.io/npm/dm/interface-forge.svg)](https://www.npmjs.com/package/interface-forge)
 
 </div>

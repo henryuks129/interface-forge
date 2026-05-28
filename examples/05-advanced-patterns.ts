@@ -18,19 +18,11 @@ interface Task {
 
 const TaskFactory = new Factory<Task>((faker, _iteration, kwargs) => {
     // Use provided status or generate one
-    const status =
-        kwargs?.status ??
-        faker.helpers.arrayElement(['todo', 'in-progress', 'done'] as const);
+    const status = kwargs?.status ?? faker.helpers.arrayElement(['todo', 'in-progress', 'done'] as const);
 
     return {
-        assignee:
-            status === 'todo'
-                ? undefined
-                : (kwargs?.assignee ?? faker.person.fullName()),
-        completedAt:
-            status === 'done'
-                ? (kwargs?.completedAt ?? faker.date.recent())
-                : undefined,
+        assignee: status === 'todo' ? undefined : (kwargs?.assignee ?? faker.person.fullName()),
+        completedAt: status === 'done' ? (kwargs?.completedAt ?? faker.date.recent()) : undefined,
         dueDate: kwargs?.dueDate ?? faker.date.future(),
         id: kwargs?.id ?? faker.string.uuid(),
         status,
@@ -52,14 +44,7 @@ interface Product {
 }
 
 const categories = ['Electronics', 'Books', 'Clothing', 'Food', 'Home'];
-const allTags = [
-    'new',
-    'sale',
-    'popular',
-    'limited',
-    'eco-friendly',
-    'premium',
-];
+const allTags = ['new', 'sale', 'popular', 'limited', 'eco-friendly', 'premium'];
 
 const ProductFactory = new Factory<Product>((faker) => ({
     category: faker.sample(categories),
@@ -152,13 +137,10 @@ const CustomerFactory = new Factory<Customer>((faker) => {
 });
 
 const customers = CustomerFactory.batch(100);
-const tierCounts = customers.reduce<Record<string, number>>(
-    (acc: Record<string, number>, c: Customer) => {
-        acc[c.tier] = (acc[c.tier] || 0) + 1;
-        return acc;
-    },
-    {},
-);
+const tierCounts = customers.reduce<Record<string, number>>((acc: Record<string, number>, c: Customer) => {
+    acc[c.tier] = (acc[c.tier] || 0) + 1;
+    return acc;
+}, {});
 console.log('Customer tier distribution:', tierCounts);
 
 const createSeededFactory = () => {
@@ -177,7 +159,4 @@ const SeededFactory2 = createSeededFactory();
 const deterministicData1 = SeededFactory1.batch(3);
 const deterministicData2 = SeededFactory2.batch(3);
 
-console.log(
-    'Deterministic data matches:',
-    JSON.stringify(deterministicData1) === JSON.stringify(deterministicData2),
-);
+console.log('Deterministic data matches:', JSON.stringify(deterministicData1) === JSON.stringify(deterministicData2));
