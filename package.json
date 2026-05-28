@@ -1,7 +1,7 @@
 {
     "name": "interface-forge",
     "author": "Na'aman Hirschfeld",
-    "version": "2.6.6",
+    "version": "2.6.7",
     "license": "MIT",
     "description": "A TypeScript library for creating strongly typed mock data factories using Faker.js for test data generation",
     "keywords": [
