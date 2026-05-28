@@ -13,7 +13,7 @@ Interface Forge is a TypeScript library for creating strongly typed mock data fa
 - **Type-Safe Factories**: Create factories that are fully type-safe, ensuring that your test data always matches your interfaces.
 - **Faker.js Integration**: Leverages the full power of Faker.js for generating realistic data.
 - **Advanced Composition**: Easily compose factories to create complex data structures.
-- **Zod Schema Integration**: Generate mock data directly from your Zod schemas.
+- **Schema Integration**: Generate mock data directly from Zod or JSON Schema.
 - **Extensible**: Customize and extend the library to fit your specific needs.
 
 ## Support This Project

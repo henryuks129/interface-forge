@@ -10,7 +10,7 @@
 
 </div>
 
-A TypeScript library for creating strongly typed mock data factories. Built on [Faker.js](https://fakerjs.dev/) with advanced composition patterns, database persistence, fixture caching, and optional [Zod](https://zod.dev/) schema integration.
+A TypeScript library for creating strongly typed mock data factories. Built on [Faker.js](https://fakerjs.dev/) with advanced composition patterns, database persistence, fixture caching, and optional [Zod](https://zod.dev/) and JSON Schema integration.
 
 ## Support This Project
 
@@ -27,7 +27,7 @@ Your support helps maintain and improve this library for the community! 🚀
 - **🔄 Advanced Composition**: Build complex object relationships with `compose()` and `extend()`
 - **🗄️ Database Integration**: Built-in persistence with Mongoose, Prisma, TypeORM adapters
 - **📁 Fixture Caching**: Cache generated data for consistent test scenarios
-- **📐 Zod Integration**: Generate data directly from schemas with validation
+- **📐 Schema Integration**: Generate data directly from Zod or JSON Schema with validation
 - **🔗 Hooks & Transforms**: Pre/post-build data transformation and validation
 - **🎲 Deterministic**: Seed generators for reproducible test data
 
@@ -47,6 +47,9 @@ pnpm add --save-dev interface-forge
 
 # For Zod integration (optional)
 npm install zod
+
+# For JSON Schema integration (optional)
+npm install ajv ajv-formats
 ```
 
 ## Quick Start
@@ -95,6 +98,24 @@ const userSchema = z.object({
 
 const userFactory = new ZodFactory(userSchema);
 const user = userFactory.build(); // Automatically validates against schema
+```
+
+### JSON Schema Integration
+
+```typescript
+import { JsonSchemaFactory } from 'interface-forge/json-schema';
+
+const userSchema = {
+    type: 'object',
+    required: ['id', 'email'],
+    properties: {
+        id: { type: 'string', format: 'uuid' },
+        email: { type: 'string', format: 'email' },
+    },
+} as const;
+
+const userFactory = new JsonSchemaFactory(userSchema);
+const user = userFactory.build(); // Automatically validates with AJV
 ```
 
 ### Database Persistence
@@ -147,6 +168,9 @@ const enhancedUserFactory = userFactory.compose<EnhancedUser>({
 
 - `CycleGenerator` - Predictable value cycling
 - `SampleGenerator` - Random sampling without repeats
+- `factory.sequence.increment()` - Incrementing numeric sequences
+- `factory.sequence.template()` - Template-based string sequences
+- `factory.sequence.date()` - Date/time sequences
 
 ## Documentation
 
@@ -155,6 +179,7 @@ const enhancedUserFactory = userFactory.compose<EnhancedUser>({
 - [Getting Started](https://goldziher.github.io/interface-forge/docs/getting-started/installation)
 - [Core Concepts](https://goldziher.github.io/interface-forge/docs/core/factory-basics)
 - [Zod Integration](https://goldziher.github.io/interface-forge/docs/schema/zod-integration)
+- [JSON Schema Integration](https://goldziher.github.io/interface-forge/docs/schema/json-schema-integration)
 - [Advanced Features](https://goldziher.github.io/interface-forge/docs/advanced/persistence)
 - [API Reference](https://goldziher.github.io/interface-forge/docs/api)
 

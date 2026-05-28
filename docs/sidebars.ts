@@ -16,7 +16,7 @@ const sidebars: SidebarsConfig = {
         {
             type: 'category',
             label: 'Schema Integration',
-            items: ['schema/zod-integration', 'schema/custom-handlers'],
+            items: ['schema/zod-integration', 'schema/json-schema-integration', 'schema/custom-handlers'],
         },
         {
             type: 'category',

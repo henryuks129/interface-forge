@@ -12,6 +12,7 @@ export default defineConfig({
         lib: {
             entry: {
                 index: path.resolve(__dirname, 'src/index.ts'),
+                'json-schema': path.resolve(__dirname, 'src/json-schema.ts'),
                 zod: path.resolve(__dirname, 'src/zod.ts'),
             },
             fileName: (format, entryName) => `${entryName}.${format === 'es' ? 'mjs' : 'js'}`,
@@ -20,7 +21,7 @@ export default defineConfig({
         },
         minify: true,
         rollupOptions: {
-            external: ['zod', 'node:crypto', 'node:fs', 'node:path'],
+            external: ['ajv', 'ajv-formats', 'zod', 'node:crypto', 'node:fs', 'node:path'],
             output: {
                 preserveModules: false,
             },

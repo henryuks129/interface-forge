@@ -21,7 +21,7 @@ if (typeof process !== 'undefined' && process.versions?.node) {
 }
 /* eslint-enable @typescript-eslint/no-unnecessary-condition, @typescript-eslint/no-require-imports, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, prefer-destructuring */
 import { ConfigurationError, FixtureError, FixtureValidationError } from './errors';
-import { CycleGenerator, SampleGenerator } from './generators';
+import { createSequenceFactory, CycleGenerator, SampleGenerator, type SequenceFactory } from './generators';
 import { merge, Ref, validateBatchSize } from './utils';
 import { DEFAULT_MAX_DEPTH } from './constants';
 
@@ -32,7 +32,21 @@ export {
     FixtureValidationError,
     ValidationError,
 } from './errors';
-export { BaseGenerator, CycleGenerator, SampleGenerator } from './generators';
+export {
+    BaseGenerator,
+    createSequenceFactory,
+    CycleGenerator,
+    DateSequenceGenerator,
+    IncrementSequenceGenerator,
+    SampleGenerator,
+    TemplateSequenceGenerator,
+} from './generators';
+export type {
+    DateSequenceOptions,
+    IncrementSequenceOptions,
+    SequenceFactory,
+    TemplateSequenceOptions,
+} from './generators';
 export { Ref } from './utils';
 
 export type AfterBuildHook<T> = (obj: T) => Promise<T> | T;
@@ -170,6 +184,7 @@ export class Factory<
     protected beforeBuildHooks: BeforeBuildHook<T>[] = [];
     protected readonly factory: F;
     private defaultAdapter?: PersistenceAdapter<T>;
+    readonly sequence: SequenceFactory = createSequenceFactory();
 
     constructor(factory: F, { locale = en, randomizer, ...rest }: Partial<O> = {}) {
         super({

@@ -2,6 +2,20 @@
 
 All notable user-facing changes to this project are documented here.
 
+## [2.7.0] - 2026-05-28
+
+### Added
+
+- Added `interface-forge/json-schema` with `JsonSchemaFactory` for optional AJV-backed JSON Schema data generation and validation.
+- Added JSON Schema support for object, primitive, array, nested object, `enum`, `const`, common string/number/array constraints, selected formats, and shallow local `$defs`/`definitions` references.
+- Added `factory.sequence.increment()`, `factory.sequence.template()`, and `factory.sequence.date()` helpers for stateful sequence values in factory schemas.
+- Added `IncrementSequenceGenerator`, `TemplateSequenceGenerator`, and `DateSequenceGenerator` exports for direct generator usage.
+
+### Documentation
+
+- Added JSON Schema integration documentation and installation guidance.
+- Updated generator documentation to cover `factory.sequence` and direct generator usage.
+
 ## [2.6.7] - 2026-05-28
 
 ### Fixed

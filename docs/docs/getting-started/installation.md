@@ -25,3 +25,11 @@ If you want to use the Zod integration, you will also need to install `zod`:
 ```bash
 pnpm add zod
 ```
+
+## Optional JSON Schema Integration
+
+If you want to use the JSON Schema integration, install the AJV peer dependencies:
+
+```bash
+pnpm add ajv ajv-formats
+```

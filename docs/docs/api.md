@@ -55,6 +55,24 @@ const user = factory.build();
 - `withTypeHandler(typeName, handler)` - Add custom type handler
 - `withTypeHandlers(handlers)` - Add multiple type handlers
 
+### JsonSchemaFactory
+
+Generate data from JSON Schema and validate it with AJV.
+
+```typescript
+import { JsonSchemaFactory } from 'interface-forge/json-schema';
+
+const factory = new JsonSchemaFactory(userSchema);
+const user = factory.build();
+```
+
+**Methods:**
+
+- `build(overrides?)` - Generate and validate one object
+- `batch(count, overrides?)` - Generate and validate multiple objects
+- `buildAsync(overrides?)` - Async generation
+- `batchAsync(count, overrides?)` - Async batch generation
+
 ### Utility Classes
 
 **Ref\<T>** - Lazy references
@@ -73,6 +91,15 @@ const gen = new CycleGenerator(['a', 'b', 'c']);
 
 ```typescript
 const gen = new SampleGenerator(['x', 'y', 'z']);
+```
+
+**factory.sequence** - Stateful sequence helpers
+
+```typescript
+const userFactory = new Factory<User>((faker) => ({
+    id: faker.sequence.increment({ start: 1 }),
+    slug: faker.sequence.template('user-{0000}'),
+}));
 ```
 
 ## Type Definitions

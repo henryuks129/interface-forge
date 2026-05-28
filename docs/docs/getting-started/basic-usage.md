@@ -140,4 +140,5 @@ const eventFactory = new Factory<Event>((faker) => {
 
 - [Factory Composition](../core/composition) - Combine factories
 - [Utility Generators](../core/generators) - Control data patterns
-- [Zod Integration](../schema/zod-integration) - Schema-based generation
+- [Zod Integration](../schema/zod-integration) - Zod-based generation
+- [JSON Schema Integration](../schema/json-schema-integration) - JSON Schema-based generation
