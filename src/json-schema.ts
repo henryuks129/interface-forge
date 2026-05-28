@@ -48,9 +48,11 @@ function mergeGenerated<T>(generated: unknown, factoryValues: unknown): T {
             ...factoryValues,
         } as T;
     }
-    return (factoryValues === undefined || (isRecord(factoryValues) && Object.keys(factoryValues).length === 0)
-        ? generated
-        : factoryValues) as T;
+    return (
+        factoryValues === undefined || (isRecord(factoryValues) && Object.keys(factoryValues).length === 0)
+            ? generated
+            : factoryValues
+    ) as T;
 }
 
 class JsonSchemaGenerator {
@@ -131,13 +133,17 @@ class JsonSchemaGenerator {
         let max = schema.maximum ?? (integer ? NUMBER_CONSTRAINTS.DEFAULT_INT_MAX : NUMBER_CONSTRAINTS.DEFAULT_MAX);
 
         if (typeof schema.exclusiveMinimum === 'number') {
-            min = integer ? Math.floor(schema.exclusiveMinimum) + 1 : schema.exclusiveMinimum + NUMBER_CONSTRAINTS.PRECISION_OFFSET;
+            min = integer
+                ? Math.floor(schema.exclusiveMinimum) + 1
+                : schema.exclusiveMinimum + NUMBER_CONSTRAINTS.PRECISION_OFFSET;
         } else if (schema.exclusiveMinimum === true) {
             min = integer ? min + 1 : min + NUMBER_CONSTRAINTS.PRECISION_OFFSET;
         }
 
         if (typeof schema.exclusiveMaximum === 'number') {
-            max = integer ? Math.ceil(schema.exclusiveMaximum) - 1 : schema.exclusiveMaximum - NUMBER_CONSTRAINTS.PRECISION_OFFSET;
+            max = integer
+                ? Math.ceil(schema.exclusiveMaximum) - 1
+                : schema.exclusiveMaximum - NUMBER_CONSTRAINTS.PRECISION_OFFSET;
         } else if (schema.exclusiveMaximum === true) {
             max = integer ? max - 1 : max - NUMBER_CONSTRAINTS.PRECISION_OFFSET;
         }
@@ -166,7 +172,11 @@ class JsonSchemaGenerator {
         const max = schema.maxLength ?? Math.max(min, STRING_LENGTHS.DEFAULT);
 
         const formatted = this.#generateFormattedString(schema.format);
-        if (formatted && formatted.length >= min && (schema.maxLength === undefined || formatted.length <= schema.maxLength)) {
+        if (
+            formatted &&
+            formatted.length >= min &&
+            (schema.maxLength === undefined || formatted.length <= schema.maxLength)
+        ) {
             return formatted;
         }
 
@@ -209,7 +219,9 @@ class JsonSchemaGenerator {
             '0000',
         ].filter((candidate): candidate is string => typeof candidate === 'string');
 
-        return candidates.find((candidate) => candidate.length >= minLength && candidate.length <= maxLength && regex.test(candidate));
+        return candidates.find(
+            (candidate) => candidate.length >= minLength && candidate.length <= maxLength && regex.test(candidate),
+        );
     }
 
     #buildPrefixedDigitPattern(pattern: string): string | undefined {
@@ -282,7 +294,7 @@ export class JsonSchemaFactory<
     declare buildAsync: (kwargs?: Partial<T>, options?: Partial<O>) => Promise<T>;
 
     constructor(schema: JsonSchema, optionsOrFactory?: O | PartialFactoryFunction<T>, options?: O) {
-        let generator: JsonSchemaGenerator;
+        const generatorRef: { value?: JsonSchemaGenerator } = {};
         const factoryFunction = isFunction(optionsOrFactory)
             ? optionsOrFactory
             : ((() => ({})) as PartialFactoryFunction<T>);
@@ -292,17 +304,24 @@ export class JsonSchemaFactory<
               ? (optionsOrFactory as O)
               : ({} as O);
 
-        super(((factory, iteration, kwargs) => {
-            const generated = generator.generate(schema);
-            const factoryValues = (factoryFunction as FactoryFunction<T>)(factory as Factory<T>, iteration, kwargs);
-            if (factoryValues instanceof Promise) {
-                return factoryValues.then((values) => mergeGenerated<T>(generated, values)) as Promise<T>;
-            }
-            return mergeGenerated<T>(generated, factoryValues);
-        }) as FactoryFunction<T>, factoryOptions);
+        super(
+            ((factory, iteration, kwargs) => {
+                const generator = generatorRef.value;
+                if (!generator) {
+                    throw new ConfigurationError('JSON Schema generator has not been initialized');
+                }
+                const generated = generator.generate(schema);
+                const factoryValues = (factoryFunction as FactoryFunction<T>)(factory as Factory<T>, iteration, kwargs);
+                if (factoryValues instanceof Promise) {
+                    return factoryValues.then((values) => mergeGenerated<T>(generated, values)) as Promise<T>;
+                }
+                return mergeGenerated<T>(generated, factoryValues);
+            }) as FactoryFunction<T>,
+            factoryOptions,
+        );
 
         this.#schema = schema;
-        generator = new JsonSchemaGenerator(this as unknown as Factory<unknown>, schema);
+        generatorRef.value = new JsonSchemaGenerator(this as unknown as Factory<unknown>, schema);
 
         const ajv = new Ajv({
             allErrors: true,
@@ -328,7 +347,9 @@ export class JsonSchemaFactory<
 
     #validate(value: T): T {
         if (!this.#validator(value)) {
-            throw new ValidationError(`Generated value does not match JSON Schema: ${JSON.stringify(this.#validator.errors)}`);
+            throw new ValidationError(
+                `Generated value does not match JSON Schema: ${JSON.stringify(this.#validator.errors)}`,
+            );
         }
         return value;
     }
